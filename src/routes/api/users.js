@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import * as users from '../../controllers/users';
-import { auth } from '../auth';
+const { Router } = require('express');
+const users = require('../../controllers/users');
+const { auth } = require('../auth');
 
 const router = Router();
 
@@ -14,4 +14,4 @@ router.put('/users/:id', auth.required, users.update);
 
 router.delete('/users/:id', auth.required, users.remove);
 
-export { router as users };
+module.exports = { users: router };

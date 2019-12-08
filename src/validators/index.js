@@ -1,1 +1,0 @@
-export { validateLogin } from './validateLogin';

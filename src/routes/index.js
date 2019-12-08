@@ -1,10 +1,12 @@
-import * as express from 'express';
-import { api } from './api';
-import { authRoutes } from './auth';
+const express = require('express');
+const { api } = require('./api');
+const { authRoutes } = require('./auth');
 
 const router = express.Router();
 
 router.use(authRoutes);
 router.use('/api', api);
 
-export { router as routes };
+module.exports = {
+  routes: router,
+};

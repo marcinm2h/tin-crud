@@ -1,96 +1,54 @@
-import { NextFunction, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { Request } from '../routes/auth';
-import { User } from '../models/User';
+const { User } = require('../models/User');
 
-export const create = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const userRepository = getRepository(User);
-    const user = new User();
+const users = [
+  new User({ login: 'admin', mail: 'mail@mail.com ' }),
+  new User({ login: 'admin1', mail: 'mai1l@mail.com ' }),
+  new User({ login: 'admin2', mail: 'mai2l@mail.com ' }),
+  new User({ login: 'admin3', mail: 'mai3l@mail.com ' }),
+];
 
-    const response = await userRepository.save(user);
+const create = async (req, res) => {
+  const user = new User(); // TODO: req.data
+  users.push(user);
 
-    return res.json({
-      data: response,
-    });
-  } catch (e) {
-    next(e);
-  }
+  return res.json({
+    data: user,
+  });
 };
 
-export const getAll = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const userRepository = getRepository(User);
-
-    const response = await userRepository.find();
-
-    return res.json({
-      data: response,
-    });
-  } catch (e) {
-    next(e);
-  }
+const getAll = (req, res) => {
+  return res.json({
+    data: users,
+  });
 };
 
-export const get = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id: userId } = req.params;
-    const userRepository = getRepository(User);
+const get = (req, res) => {
+  const { id: userId } = req.params;
+  const user = users.find(user => user.id === userId);
 
-    const response = await userRepository.findOne(userId);
-
-    return res.json({
-      data: response,
-    });
-  } catch (e) {
-    next(e);
-  }
+  return res.json({
+    data: user,
+  });
 };
 
-export const update = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: userId } = req.params;
-    const { login } = req.body;
-    const userRepository = getRepository(User);
-    const user = await userRepository.findOne(userId);
-    user.login = login;
+const update = (req, res) => {
+  const { id: userId } = req.params;
+  const { login } = req.body;
+  const user = users.find(user => user.id === userId);
+  user.login = login;
 
-    const response = await userRepository.save(user);
-
-    return res.json({
-      data: response,
-    });
-  } catch (e) {
-    next(e);
-  }
+  return res.json({
+    data: user,
+  });
 };
 
-export const remove = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: userId } = req.params;
-    const userRepository = getRepository(User);
-    const response = await userRepository.remove(userId);
+const remove = (req, res) => {
+  const { id: userId } = req.params;
+  users = users.filter(user => user.id !== userId);
 
-    return res.json({
-      data: response,
-    });
-  } catch (e) {
-    next(e);
-  }
+  return res.json({
+    data: users,
+  });
 };
+
+module.exports = { create, getAll, get, update, remove };

@@ -1,4 +1,4 @@
-import { validateLogin } from '../validateLogin';
+const { validateLogin } = require('../validateLogin');
 
 test('invalid login', () => {
   [undefined, null, '', 'a', 'ab'].forEach(value =>

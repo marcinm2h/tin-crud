@@ -1,12 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-
-export const requestLogger = () => (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const requestLogger = (logFn = console.log) => (req, res, next) => {
   const { method, body, params, url } = req;
-  console.log(
+  logFn(
     `[REQUEST] ${url}`,
     JSON.stringify({
       method,
@@ -14,5 +8,8 @@ export const requestLogger = () => (
       params,
     }),
   );
+
   next();
 };
+
+module.exports = { requestLogger };

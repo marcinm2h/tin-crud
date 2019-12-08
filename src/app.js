@@ -1,45 +1,37 @@
-import * as express from 'express';
-import * as session from 'express-session';
-import * as bodyParser from 'body-parser';
-import {
-  DB_PATH,
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const {
   PORT,
   SESSION_SECRET,
   SESSION_NAME,
   SESSION_MAX_AGE,
-} from './env';
-import { routes } from './routes';
-import { errorHandler, requestLogger } from './utils';
-import { User } from './models';
+} = require('./env');
+const { routes } = require('./routes');
+const { errorHandler } = require('./utils/errorHandler');
+const { requestLogger } = require('./utils/requestLogger');
 
-const connectionOptions = {
-  type: 'sqlite',
-  database: DB_PATH,
-  entities: [User],
-  synchronize: true,
-  logging: true,
-};
+const app = express();
 
-createConnection(connectionOptions).then(async connection => {
-  const app = express();
-  app.use(
-    session({
-      secret: SESSION_SECRET,
-      name: SESSION_NAME,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: SESSION_MAX_AGE,
-        sameSite: true,
-        sexure: false,
-      },
-    }),
-  );
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(requestLogger());
-  app.use(routes);
-  app.use(errorHandler());
-  app.listen(PORT);
-  console.log(`Server is running at ${PORT}`);
-});
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    name: SESSION_NAME,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: SESSION_MAX_AGE,
+      sameSite: true,
+      sexure: false,
+    },
+  }),
+);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(routes);
+app.use(requestLogger());
+app.use(errorHandler());
+
+app.listen(PORT);
+
+console.log(`Server is running at ${PORT}`);

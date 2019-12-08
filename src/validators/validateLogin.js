@@ -1,6 +1,6 @@
 const MIN_LOGIN_LENGTH = 3;
 
-export function validateLogin(value?: string) {
+const validateLogin = value => {
   if (typeof value !== 'string') {
     return false;
   }
@@ -10,4 +10,6 @@ export function validateLogin(value?: string) {
   }
 
   return true;
-}
+};
+
+module.exports = { validateLogin };

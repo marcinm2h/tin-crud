@@ -1,18 +1,8 @@
-import * as express from 'express';
-import { NextFunction, Response } from 'express';
-import { NODE_ENV } from '../env';
+const express = require('express');
+const { NODE_ENV } = require('../env');
 
-export interface Request extends express.Request {
-  sessionID: string;
-  session: {
-    userId: number,
-    login: string,
-    destroy: (onFinish: (error: any) => void) => void,
-  };
-}
-
-export const auth = {
-  required: (req: Request, res: Response, next: NextFunction) => {
+const auth = {
+  required: (req, res, next) => {
     if (NODE_ENV === 'development') {
       return next();
     }
@@ -25,4 +15,4 @@ export const auth = {
 
 const router = express.Router();
 
-export { router as authRoutes };
+module.exports = { auth, authRoutes: router };
