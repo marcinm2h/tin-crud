@@ -28,8 +28,8 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(routes);
 app.use(requestLogger());
+app.use(routes);
 app.use(errorHandler());
 
 app.listen(PORT);
