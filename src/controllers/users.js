@@ -7,7 +7,7 @@ let users = [
   new User({ login: 'admin3', mail: 'mai3l@mail.com ' }),
 ];
 
-const list = (req, res, _) => {
+const list = (req, res) => {
   return res.json({
     data: users,
   });
