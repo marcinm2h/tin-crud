@@ -17,7 +17,7 @@ class User {
     this.mail = mail;
     this.name = name;
     this.gender = gender;
-    this.registerDate = registerDate; // timestamp -> Date
+    this.registerDate = registerDate; // TODO: timestamp -> Date
   }
 }
 

@@ -8,13 +8,20 @@ class Post {
     votesAgainst = 0,
     desctiption,
     creationDate = Date.now(),
+    comments = [],
+    group,
+    author,
   }) {
     this.id = id;
     this.url = url;
     this.votesFor = votesFor;
     this.votesAgainst = votesAgainst;
     this.desctiption = desctiption;
-    this.creationDate = creationDate; // timestamp -> Date
+    this.creationDate = creationDate; // TODO: timestamp -> Date
+
+    this.comments = comments;
+    this.group = group;
+    this.author = author;
   }
 }
 
