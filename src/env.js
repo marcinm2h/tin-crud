@@ -4,8 +4,10 @@ dotenv.config();
 
 const TWO_HOURS = 2 * 60 * 60 * 1000;
 
+const NODE_ENV = process.env.NODE_ENV || 'development';
 module.exports = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  __DEV__: NODE_ENV === 'development',
+  NODE_ENV,
   PORT: process.env.PORT || 3000,
   SESSION_MAX_AGE: process.env.SESSION_MAX_AGE || TWO_HOURS,
   SESSION_NAME: process.env.SESSION_NAME || 'sid',

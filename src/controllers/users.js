@@ -1,28 +1,19 @@
 const { User } = require('../models/User');
 
-const users = [
+let users = [
   new User({ login: 'admin', mail: 'mail@mail.com ' }),
   new User({ login: 'admin1', mail: 'mai1l@mail.com ' }),
   new User({ login: 'admin2', mail: 'mai2l@mail.com ' }),
   new User({ login: 'admin3', mail: 'mai3l@mail.com ' }),
 ];
 
-const create = async (req, res) => {
-  const user = new User(); // TODO: req.data
-  users.push(user);
-
-  return res.json({
-    data: user,
-  });
-};
-
-const getAll = (req, res) => {
+const list = (req, res, _) => {
   return res.json({
     data: users,
   });
 };
 
-const get = (req, res) => {
+const details = (req, res) => {
   const { id: userId } = req.params;
   const user = users.find(user => user.id === userId);
 
@@ -31,7 +22,16 @@ const get = (req, res) => {
   });
 };
 
-const update = (req, res) => {
+const add = (req, res) => {
+  const user = new User(); // TODO: req.data
+  users.push(user);
+
+  return res.json({
+    data: user,
+  });
+};
+
+const edit = (req, res) => {
   const { id: userId } = req.params;
   const { login } = req.body;
   const user = users.find(user => user.id === userId);
@@ -51,4 +51,4 @@ const remove = (req, res) => {
   });
 };
 
-module.exports = { create, getAll, get, update, remove };
+module.exports = { list, details, add, edit, remove };

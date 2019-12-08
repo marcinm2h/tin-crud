@@ -1,6 +1,10 @@
-const errorHandler = () => (error, req, res) => {
-  console.log(`[ERROR] ${req.url}`, error);
-  return res.json({ error: error.message });
+const { __DEV__ } = require('../env');
+
+const errorHandler = () => (error, req, res, next) => {
+  console.log(`[ERROR] ${req.url}`, __DEV__ && error);
+  return res.json(
+    Object.assign({ error: error.message }, __DEV__ && { stack: error.stack }),
+  );
 };
 
 module.exports = { errorHandler };

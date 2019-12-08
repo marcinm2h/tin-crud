@@ -1,17 +1,17 @@
 const { Router } = require('express');
-const users = require('../../controllers/users');
+const { list, details, add, edit, remove } = require('../../controllers/users');
 const { auth } = require('../auth');
 
 const router = Router();
 
-router.post('/users/', auth.required, users.create);
+router.get('/users', auth.required, list);
 
-router.get('/users', auth.required, users.getAll);
+router.get('/users/:id', auth.required, details);
 
-router.get('/users/:id', auth.required, users.get);
+router.post('/users', auth.required, add);
 
-router.put('/users/:id', auth.required, users.update);
+router.put('/users/:id', auth.required, edit);
 
-router.delete('/users/:id', auth.required, users.remove);
+router.delete('/users/:id', auth.required, remove);
 
 module.exports = { users: router };
