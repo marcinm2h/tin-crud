@@ -1,0 +1,38 @@
+{
+  "name": "tin-crud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/app.js",
+  "author": "Marcin Moch",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "husky": ">=1",
+    "jest": "^24.8.0",
+    "lint-staged": ">=8",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.16.1",
+    "uuid": "^3.3.2"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "npm run start",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
