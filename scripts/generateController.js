@@ -86,4 +86,3 @@ fs.writeFile(controllerPath, render(controllerName), err => {
   }
   console.log(`${controllerName} controller generated!`);
 });
-console.log(code);
