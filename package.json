@@ -23,6 +23,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "npm run start",
+    "generate:controller": "node scripts/generateController.js",
     "test": "jest"
   },
   "husky": {

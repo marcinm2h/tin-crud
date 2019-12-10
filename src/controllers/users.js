@@ -23,6 +23,7 @@ const details = (req, res) => {
 
 const add = (req, res) => {
   const userRepository = new UserRepository();
+  // FIXME: validate req.body.data
   const user = new User(req.body.data);
   userRepository.add(user);
   userRepository.save();
