@@ -10,7 +10,7 @@ const { Repository } = require('./');
 
 class ${namePascal}Repository extends Repository {}
 
-module.exports = { ${namePascal} };
+module.exports = { ${namePascal}Repository };
 `;
 const name = argName.trim().toLowerCase();
 const namePascal = (() => {

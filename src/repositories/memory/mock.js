@@ -1,5 +1,7 @@
 const { Admin } = require('../../models/Admin');
 const { AdminRepository } = require('./Admin');
+const { Comment } = require('../../models/Comment');
+const { CommentRepository } = require('./Comment');
 const { Group } = require('../../models/Group');
 const { GroupRepository } = require('./Group');
 const { Post } = require('../../models/Post');
@@ -95,6 +97,14 @@ const initData = () => {
     { url: 'https://twitter.com', desctiption: 'Twitter' },
   ].forEach(data => postRepository.add(new Post(data)));
 
+  const commentRepository = new CommentRepository();
+  [
+    { content: 'Ciekawy link!' },
+    { content: 'Nie znałem.' },
+    { content: 'Nie podoba mi się to :(' },
+    { content: 'XD' },
+  ].forEach(data => commentRepository.add(new Comment(data)));
+
   // User 1 --owns-- * Group
   groupRepository.instances.forEach(group => {
     const owner = randomEl(userRepository.instances);
@@ -122,6 +132,20 @@ const initData = () => {
     const group = randomEl(groupRepository.instances);
     post.group = group.id;
     group.posts.push(post.id);
+  });
+
+  // User 1 --author-- * Comment
+  commentRepository.instances.forEach(comment => {
+    const author = randomEl(userRepository.instances);
+    comment.author = author.id;
+    author.comments.push(comment.id);
+  });
+
+  // Comment * --about-- 1 Post
+  commentRepository.instances.forEach(comment => {
+    const post = randomEl(postRepository.instances);
+    comment.post = post.id;
+    post.comments.push(comment.id);
   });
 };
 
