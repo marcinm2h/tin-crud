@@ -1,6 +1,6 @@
 let nextId = 0;
 
-class User {
+class Admin {
   constructor({
     id = nextId++,
     login,
@@ -19,4 +19,4 @@ class User {
   }
 }
 
-module.exports = { User };
+module.exports = { Admin };
