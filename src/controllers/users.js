@@ -1,21 +1,20 @@
 const { User } = require('../models/User');
-
-let instances = [
-  new User({ login: 'admin', mail: 'mail@mail.com ' }),
-  new User({ login: 'admin1', mail: 'mai1l@mail.com ' }),
-  new User({ login: 'admin2', mail: 'mai2l@mail.com ' }),
-  new User({ login: 'admin3', mail: 'mai3l@mail.com ' }),
-];
+const { UserRepository } = require('../repositories/memory/User');
 
 const list = (req, res) => {
+  const userRepository = new UserRepository();
+  const users = userRepository.list();
+  userRepository.save();
+
   return res.json({
-    data: instances,
+    data: users,
   });
 };
 
 const details = (req, res) => {
-  const { id: userId } = req.params;
-  const user = instances.find(user => user.id === userId);
+  const userRepository = new UserRepository();
+  const user = userRepository.details(req.params.id);
+  userRepository.save();
 
   return res.json({
     data: user,
@@ -23,8 +22,10 @@ const details = (req, res) => {
 };
 
 const add = (req, res) => {
-  const user = new User(); // TODO: req.data
-  instances.push(user);
+  const userRepository = new UserRepository();
+  const user = new User(req.body.data);
+  userRepository.add(user);
+  userRepository.save();
 
   return res.json({
     data: user,
@@ -32,22 +33,22 @@ const add = (req, res) => {
 };
 
 const edit = (req, res) => {
-  const { id: userId } = req.params;
-  const { login } = req.body;
-  const user = instances.find(user => user.id === userId);
-  user.login = login;
+  const userRepository = new UserRepository();
+  userRepository.edit(req.params.id, req.body.data);
+  userRepository.save();
 
   return res.json({
-    data: user,
+    data: {},
   });
 };
 
 const remove = (req, res) => {
-  const { id: userId } = req.params;
-  instances = instances.filter(user => user.id !== userId);
+  const userRepository = new UserRepository();
+  userRepository.remove(req.params.id);
+  userRepository.save();
 
   return res.json({
-    data: instances,
+    data: {},
   });
 };
 
