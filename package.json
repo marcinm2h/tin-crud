@@ -24,6 +24,8 @@
     "start": "node src/app.js",
     "dev": "npm run start",
     "generate:controller": "node scripts/generateController.js",
+    "generate:repository": "node scripts/generateRepository.js",
+    "generate:route": "node scripts/generateRoute.js",
     "test": "jest"
   },
   "husky": {

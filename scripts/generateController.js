@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 
-const render = controllerName => {
-  const template = ({ name, namePascal, namePlural, namePascalPlural }) => `
+const render = ({ name, namePascal, namePlural, namePascalPlural }) => `
 const { ${namePascal} } = require('../models/${namePascal}');
 const { ${namePascal}Repository } = require('../repositories/memory/${namePascal}');
 
@@ -59,30 +58,30 @@ const remove = (req, res) => {
 };
 
 module.exports = { list, details, add, edit, remove };`;
-  const namePascal = (() => {
-    const [first, ...rest] = name;
-    return first.toUpperCase().concat(rest.join(''));
-  })(); // Admin
-  const namePlural = `${name}s`; // admins
-  const namePascalPlural = `${namePascal}s`; // Admins
 
-  return template({ name, namePascal, namePlural, namePascalPlural });
-};
-
-const [name, ...args] = process.argv.slice(2);
-if (!name) {
-  throw Error('Argument - controller name - required');
+const [nameArg, ...args] = process.argv.slice(2);
+if (!nameArg) {
+  throw Error('Argument - name - required');
 }
 
-const controllerName = name.trim().toLowerCase();
-const controllerPath = `./src/controllers/${controllerName}s.js`;
-const code = render(controllerName);
+const name = nameArg.trim().toLowerCase();
+const namePascal = (() => {
+  const [first, ...rest] = name;
+  return first.toUpperCase().concat(rest.join(''));
+})(); // Admin
+const namePlural = `${name}s`; // admins
+const namePascalPlural = `${namePascal}s`; // Admins
+const path = `./src/controllers/${namePlural}.js`;
 
-console.log(`Generating ${controllerPath}`);
+console.log(`Generating ${path}`);
 
-fs.writeFile(controllerPath, render(controllerName), err => {
-  if (err) {
-    return console.log(err);
-  }
-  console.log(`${controllerName} controller generated!`);
-});
+fs.writeFile(
+  path,
+  render({ name, namePascal, namePlural, namePascalPlural }),
+  err => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log(`${name} controller generated!`);
+  },
+);

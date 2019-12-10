@@ -1,6 +1,7 @@
 const { __DEV__ } = require('../../env');
 const { Router } = require('express');
 const { admins } = require('./admins');
+const { posts } = require('./posts');
 const { users } = require('./users');
 
 if (__DEV__) {
@@ -9,7 +10,8 @@ if (__DEV__) {
 
 const router = Router();
 
-router.use(users);
 router.use(admins);
+router.use(posts);
+router.use(users);
 
 module.exports = { api: router };
