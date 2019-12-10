@@ -23,7 +23,6 @@ const details = (req, res) => {
 
 const add = (req, res) => {
   const adminRepository = new AdminRepository();
-  // FIXME: validate req.body.data
   const admin = new Admin(req.body.data);
   adminRepository.add(admin);
   adminRepository.save();
