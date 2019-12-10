@@ -1,7 +1,19 @@
+const { Admin } = require('../../models/Admin');
+const { AdminRepository } = require('./Admin');
 const { User } = require('../../models/User');
 const { UserRepository } = require('./User');
 
 const initData = () => {
+  const adminRepository = new AdminRepository();
+  [
+    {
+      login: 'admin',
+      mail: 'admin@example.com',
+      name: 'Pan Admin',
+      gender: true,
+    },
+  ].forEach(data => adminRepository.add(new Admin(data)));
+
   const userRepository = new UserRepository();
   [
     {
