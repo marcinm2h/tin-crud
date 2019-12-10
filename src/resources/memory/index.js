@@ -1,22 +1,40 @@
-let instances = [];
+let allInstances = {};
 
 class DataNotFoundError extends Error {}
 
 class Repository {
-  list = () => [...instances];
+  get instances() {
+    if (!allInstances[this.constructor.name]) {
+      // TODO: add tests
+      allInstances[this.constructor.name] = [];
+    }
+
+    return allInstances[this.constructor.name];
+  }
+
+  set instances(val) {
+    if (!allInstances[this.constructor.name]) {
+      // TODO: add tests
+      allInstances[this.constructor.name] = [];
+    }
+
+    allInstances[this.constructor.name] = val;
+  }
+
+  list = () => [...this.instances];
 
   details = id => {
-    const instance = instances.find(instance => instance.id === id);
+    const instance = this.instances.find(instance => instance.id === id);
     if (!instance) {
       throw DataNotFoundError();
     }
     return { ...instance };
   };
 
-  add = instance => instances.push(instance);
+  add = instance => this.instances.push(instance);
 
   edit = (id, newData) => {
-    const instance = instances.find(instance => instance.id === id);
+    const instance = this.instances.find(instance => instance.id === id);
     if (!instance) {
       throw DataNotFoundError();
     }
@@ -24,11 +42,11 @@ class Repository {
   };
 
   remove = id => {
-    const exist = Boolean(instances.find(instance => instance.id === id));
+    const exist = Boolean(this.instances.find(instance => instance.id === id));
     if (!exist) {
       throw DataNotFoundError();
     }
-    instances = instances.filter(instance => instance.id !== id);
+    this.instances = this.instances.filter(instance => instance.id !== id);
   };
 
   save = () => {};
