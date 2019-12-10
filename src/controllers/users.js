@@ -3,6 +3,15 @@ const { UserRepository } = require('../repositories/memory/User');
 const { CommentRepository } = require('../repositories/memory/Comment');
 const { GroupRepository } = require('../repositories/memory/Group');
 const { PostRepository } = require('../repositories/memory/Post');
+const {
+  validateData,
+  validateBoolean,
+  validateEmail,
+  validateLength,
+  validateRequired,
+  validateString,
+  validateStringOrNumber,
+} = require('../validators');
 
 const list = (req, res) => {
   const userRepository = new UserRepository();
@@ -35,9 +44,16 @@ const details = (req, res) => {
 };
 
 const add = (req, res) => {
+  const data = validateData.parse(add.schema)(req.body.data);
+  const errors = validateData(add.schema)(data);
+  if (errors) {
+    return res.json({
+      errors,
+    });
+  }
+
   const userRepository = new UserRepository();
-  // FIXME: validate req.body.data
-  const user = new User(req.body.data);
+  const user = new User(data);
   userRepository.add(user);
   userRepository.save();
 
@@ -46,15 +62,74 @@ const add = (req, res) => {
   });
 };
 
+add.schema = {
+  login: {
+    required: true,
+    validators: [
+      value => validateLength(value, { minLength: 3, maxLength: 20 }),
+      validateStringOrNumber,
+    ],
+  },
+  mail: {
+    required: true,
+    validators: [
+      validateRequired,
+      validateEmail,
+      value => validateLength(value, { minLength: 5, maxLength: 50 }),
+    ],
+  },
+  name: {
+    required: true,
+    validators: [
+      validateRequired,
+      value => validateLength(value, { minLength: 3, maxLength: 50 }),
+      validateString,
+    ],
+  },
+  gender: {
+    required: true,
+    validators: [validateBoolean],
+  },
+};
+
 const edit = (req, res) => {
-  const id = parseInt(req.params.id);
+  const data = validateData.parse(add.schema)(req.body.data);
+  const errors = validateData(add.schema)(data);
+  if (errors) {
+    return res.json({
+      errors,
+    });
+  }
+
   const userRepository = new UserRepository();
-  userRepository.edit(id, req.body.data);
+  const id = parseInt(req.params.id);
+  userRepository.edit(id, data);
   userRepository.save();
 
   return res.json({
     data: {},
   });
+};
+
+edit.schema = {
+  mail: {
+    required: false,
+    validators: [
+      validateEmail,
+      value => validateLength(value, { minLength: 5, maxLength: 50 }),
+    ],
+  },
+  name: {
+    required: false,
+    validators: [
+      value => validateLength(value, { minLength: 3, maxLength: 50 }),
+      validateString,
+    ],
+  },
+  gender: {
+    required: false,
+    validators: [validateBoolean],
+  },
 };
 
 const remove = (req, res) => {
