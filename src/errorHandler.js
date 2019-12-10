@@ -1,4 +1,4 @@
-const { __DEV__ } = require('../env');
+const { __DEV__ } = require('./env');
 
 const errorHandler = () => (error, req, res, next) => {
   console.log(`[ERROR] ${req.url}`, __DEV__ && error);

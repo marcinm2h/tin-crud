@@ -1,6 +1,6 @@
 const { User } = require('../models/User');
 
-let users = [
+let instances = [
   new User({ login: 'admin', mail: 'mail@mail.com ' }),
   new User({ login: 'admin1', mail: 'mai1l@mail.com ' }),
   new User({ login: 'admin2', mail: 'mai2l@mail.com ' }),
@@ -9,13 +9,13 @@ let users = [
 
 const list = (req, res) => {
   return res.json({
-    data: users,
+    data: instances,
   });
 };
 
 const details = (req, res) => {
   const { id: userId } = req.params;
-  const user = users.find(user => user.id === userId);
+  const user = instances.find(user => user.id === userId);
 
   return res.json({
     data: user,
@@ -24,7 +24,7 @@ const details = (req, res) => {
 
 const add = (req, res) => {
   const user = new User(); // TODO: req.data
-  users.push(user);
+  instances.push(user);
 
   return res.json({
     data: user,
@@ -34,7 +34,7 @@ const add = (req, res) => {
 const edit = (req, res) => {
   const { id: userId } = req.params;
   const { login } = req.body;
-  const user = users.find(user => user.id === userId);
+  const user = instances.find(user => user.id === userId);
   user.login = login;
 
   return res.json({
@@ -44,10 +44,10 @@ const edit = (req, res) => {
 
 const remove = (req, res) => {
   const { id: userId } = req.params;
-  users = users.filter(user => user.id !== userId);
+  instances = instances.filter(user => user.id !== userId);
 
   return res.json({
-    data: users,
+    data: instances,
   });
 };
 

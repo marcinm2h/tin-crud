@@ -5,7 +5,6 @@ class User {
     id = nextId++,
     login,
     mail,
-    userName,
     name,
     gender,
     registerDate = Date.now(),
@@ -17,10 +16,9 @@ class User {
     this.id = id;
     this.login = login;
     this.password = this.password;
-    this.userName = userName;
     this.mail = mail;
     this.name = name;
-    this.gender = gender;
+    this.gender = gender; // FIXME: enum
     this.registerDate = registerDate; // TODO: timestamp -> Date
 
     this.comments = comments;

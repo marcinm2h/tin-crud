@@ -8,8 +8,8 @@ const {
   SESSION_MAX_AGE,
 } = require('./env');
 const { routes } = require('./routes');
-const { errorHandler } = require('./utils/errorHandler');
-const { requestLogger } = require('./utils/requestLogger');
+const { errorHandler } = require('./errorHandler');
+const { requestLogger } = require('./requestLogger');
 
 const app = express();
 
