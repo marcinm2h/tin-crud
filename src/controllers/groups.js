@@ -13,7 +13,7 @@ const list = (req, res) => {
 
 const details = (req, res) => {
   const groupRepository = new GroupRepository();
-  const group = groupRepository.details(req.params.id);
+  const group = groupRepository.find(req.params.id);
   groupRepository.save();
 
   return res.json({

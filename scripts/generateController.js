@@ -8,7 +8,6 @@ const { ${namePascal}Repository } = require('../repositories/memory/${namePascal
 const list = (req, res) => {
   const ${name}Repository = new ${namePascal}Repository();
   const ${namePlural} = ${name}Repository.list();
-  ${name}Repository.save();
 
   return res.json({
     data: ${namePlural},
@@ -16,9 +15,9 @@ const list = (req, res) => {
 };
 
 const details = (req, res) => {
+  const id = parseInt(req.params.id);
   const ${name}Repository = new ${namePascal}Repository();
-  const ${name} = ${name}Repository.details(req.params.id);
-  ${name}Repository.save();
+  const ${name} = ${name}Repository.find(id);
 
   return res.json({
     data: ${name},
@@ -38,8 +37,9 @@ const add = (req, res) => {
 };
 
 const edit = (req, res) => {
+  const id = parseInt(req.params.id);
   const ${name}Repository = new ${namePascal}Repository();
-  ${name}Repository.edit(req.params.id, req.body.data);
+  ${name}Repository.edit(id, req.body.data);
   ${name}Repository.save();
 
   return res.json({
@@ -48,8 +48,9 @@ const edit = (req, res) => {
 };
 
 const remove = (req, res) => {
+  const id = parseInt(req.params.id);
   const ${name}Repository = new ${namePascal}Repository();
-  ${name}Repository.remove(req.params.id);
+  ${name}Repository.remove(id);
   ${name}Repository.save();
 
   return res.json({

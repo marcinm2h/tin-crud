@@ -13,7 +13,7 @@ const list = (req, res) => {
 
 const details = (req, res) => {
   const adminRepository = new AdminRepository();
-  const admin = adminRepository.details(req.params.id);
+  const admin = adminRepository.find(req.params.id);
   adminRepository.save();
 
   return res.json({

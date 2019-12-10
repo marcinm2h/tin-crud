@@ -13,7 +13,7 @@ const list = (req, res) => {
 
 const details = (req, res) => {
   const postRepository = new PostRepository();
-  const post = postRepository.details(req.params.id);
+  const post = postRepository.find(req.params.id);
   postRepository.save();
 
   return res.json({

@@ -13,7 +13,7 @@ const list = (req, res) => {
 
 const details = (req, res) => {
   const commentRepository = new CommentRepository();
-  const comment = commentRepository.details(req.params.id);
+  const comment = commentRepository.find(req.params.id);
   commentRepository.save();
 
   return res.json({
