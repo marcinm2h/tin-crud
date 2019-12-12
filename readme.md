@@ -1,3 +1,11 @@
 # TIN CRUD
 
-https://github.com/marcinm2h/crud-express-typeorm fork
+## Start
+
+`npm start`
+
+# Start witouth auth (in dev mode only)
+
+```
+NO_AUTH npm start
+```
