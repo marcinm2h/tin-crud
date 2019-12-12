@@ -16,8 +16,8 @@ router.get('/comments/:id', auth.required, details);
 
 router.post('/comments', auth.required, add);
 
-router.put('/comments/:id', auth.required, edit);
+router.put('/comments/:id', auth.admin, edit);
 
-router.delete('/comments/:id', auth.required, remove);
+router.delete('/comments/:id', auth.admin, remove);
 
 module.exports = { comments: router };
