@@ -2,10 +2,10 @@
 
 ## Start
 
-`npm start`
+`yarn start`
 
 ## Start witouth auth (in dev mode only)
 
 ```
-NO_AUTH npm start
+NO_AUTH=true yarn start
 ```
