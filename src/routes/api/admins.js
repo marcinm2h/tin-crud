@@ -10,14 +10,14 @@ const { auth } = require('../auth');
 
 const router = Router();
 
-router.get('/admins', auth.required, list);
+router.get('/admins', auth.admin, list);
 
-router.get('/admins/:id', auth.required, details);
+router.get('/admins/:id', auth.admin, details);
 
-router.post('/admins', auth.required, add);
+router.post('/admins', auth.admin, add);
 
-router.put('/admins/:id', auth.required, edit);
+router.put('/admins/:id', auth.admin, edit);
 
-router.delete('/admins/:id', auth.required, remove);
+router.delete('/admins/:id', auth.admin, remove);
 
 module.exports = { admins: router };

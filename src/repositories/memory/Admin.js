@@ -1,3 +1,4 @@
+import omit from 'lodash/omit';
 const { Repository, DataNotFoundError } = require('./');
 
 const errors = {
@@ -19,6 +20,11 @@ class AdminRepository extends Repository {
     }
 
     return user;
+  };
+
+  find = id => {
+    const instance = Repository.prototype.find();
+    return omit(instance, ['password']);
   };
 }
 

@@ -1,3 +1,4 @@
+const omit = require('lodash/omit');
 const { User } = require('../models/User');
 const { UserRepository } = require('../repositories/memory/User');
 const { CommentRepository } = require('../repositories/memory/Comment');
@@ -15,10 +16,10 @@ const {
 const list = (req, res) => {
   const userRepository = new UserRepository();
   const users = userRepository.list();
-  userRepository.save();
+  const response = users.map(user => omit(user, ['password']));
 
   return res.json({
-    data: users,
+    data: response,
   });
 };
 

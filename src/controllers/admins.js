@@ -4,7 +4,6 @@ const { AdminRepository } = require('../repositories/memory/Admin');
 const list = (req, res) => {
   const adminRepository = new AdminRepository();
   const admins = adminRepository.list();
-  adminRepository.save();
 
   return res.json({
     data: admins,
