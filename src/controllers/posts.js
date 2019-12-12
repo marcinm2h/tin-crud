@@ -1,5 +1,8 @@
 const { Post } = require('../models/Post');
 const { PostRepository } = require('../repositories/memory/Post');
+const { GroupRepository } = require('../repositories/memory/Group');
+const { UserRepository } = require('../repositories/memory/User');
+const { CommentRepository } = require('../repositories/memory/Comment');
 
 const list = (req, res) => {
   const postRepository = new PostRepository();
@@ -12,9 +15,16 @@ const list = (req, res) => {
 };
 
 const details = (req, res) => {
+  const id = parseInt(req.params.id);
   const postRepository = new PostRepository();
-  const post = postRepository.find(req.params.id);
-  postRepository.save();
+  const groupRepository = new GroupRepository();
+  const userRepository = new UserRepository();
+  const commentRepository = new CommentRepository();
+
+  const post = postRepository.find(id);
+  post.group = groupRepository.find(post.group);
+  post.author = userRepository.find(post.author);
+  post.comments = post.comments.map(postId => commentRepository.find(postId));
 
   return res.json({
     data: post,
