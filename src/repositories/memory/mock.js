@@ -25,6 +25,7 @@ const initData = () => {
   [
     {
       login: 'admin',
+      password: 'pw',
       mail: 'admin@example.com',
       name: 'Pan Admin',
       gender: true,
@@ -35,30 +36,35 @@ const initData = () => {
   [
     {
       login: 'janusz',
+      password: 'pw',
       mail: 'janusz@example.com',
       name: 'Janusz Januszewicz',
       gender: true,
     },
     {
       login: 'halinka',
+      password: 'pw',
       mail: 'hania@example.com',
       name: 'Halina Halinowa',
       gender: false,
     },
     {
       login: 'andrzej',
+      password: 'pw',
       mail: 'andrzejek@example.com',
       name: 'Andrzej Andrew',
       gender: true,
     },
     {
       login: 'marcin',
+      password: 'pw',
       mail: 'marcin@example.com',
       name: 'Marcin M',
       gender: true,
     },
     {
       login: 's12609',
+      password: 'pw',
       mail: 's12609@example.com',
       name: 'Marcin Mmm',
       gender: true,

@@ -1,5 +1,25 @@
-const { Repository } = require('./');
+const { Repository, DataNotFoundError } = require('./');
 
-class AdminRepository extends Repository {}
+const errors = {
+  ADMIN_NOT_EXIST: login => `Nie znaleziono administratora ${login}.`,
+  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
+};
 
-module.exports = { AdminRepository };
+class AuthError extends Error {}
+
+class AdminRepository extends Repository {
+  login = ({ login, password }) => {
+    const user = this.instances.find(user => user.login === login);
+    if (!user) {
+      throw new DataNotFoundError(errors.ADMIN_NOT_EXIST(login));
+    }
+
+    if (user.password !== password) {
+      throw new AuthError(errors.INVALID_PASSWORD());
+    }
+
+    return user;
+  };
+}
+
+module.exports = { AdminRepository, AuthError };

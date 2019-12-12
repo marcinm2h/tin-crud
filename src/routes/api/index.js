@@ -1,5 +1,6 @@
 const { __DEV__ } = require('../../env');
 const { Router } = require('express');
+const { auth } = require('./auth');
 const { comments } = require('./comments');
 const { groups } = require('./groups');
 const { posts } = require('./posts');
@@ -11,6 +12,7 @@ if (__DEV__) {
 
 const router = Router();
 
+router.use(auth);
 router.use(comments);
 router.use(groups);
 router.use(posts);

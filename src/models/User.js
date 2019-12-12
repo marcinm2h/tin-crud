@@ -4,6 +4,7 @@ class User {
   constructor({
     id = nextId++,
     login,
+    password,
     mail,
     name,
     gender,
@@ -15,7 +16,7 @@ class User {
   }) {
     this.id = id;
     this.login = login;
-    this.password = this.password;
+    this.password = password;
     this.mail = mail;
     this.name = name;
     this.gender = gender; // FIXME: enum

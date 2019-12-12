@@ -20,6 +20,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
+      httpOnly: false, // FIXME: httpOnly -> save on first req
       maxAge: SESSION_MAX_AGE,
       sameSite: true,
       sexure: false,

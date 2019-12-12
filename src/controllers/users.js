@@ -8,7 +8,6 @@ const {
   validateBoolean,
   validateEmail,
   validateLength,
-  validateRequired,
   validateString,
   validateStringOrNumber,
 } = require('../validators');
@@ -73,7 +72,6 @@ add.schema = {
   mail: {
     required: true,
     validators: [
-      validateRequired,
       validateEmail,
       value => validateLength(value, { minLength: 5, maxLength: 50 }),
     ],
@@ -81,7 +79,6 @@ add.schema = {
   name: {
     required: true,
     validators: [
-      validateRequired,
       value => validateLength(value, { minLength: 3, maxLength: 50 }),
       validateString,
     ],

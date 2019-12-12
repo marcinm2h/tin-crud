@@ -1,5 +1,25 @@
-const { Repository } = require('./');
+const { Repository, DataNotFoundError } = require('./');
 
-class UserRepository extends Repository {}
+const errors = {
+  USER_NOT_EXIST: login => `Nie znaleziono użytkownika ${login}.`,
+  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
+};
 
-module.exports = { UserRepository };
+class AuthError extends Error {}
+
+class UserRepository extends Repository {
+  login = ({ login, password }) => {
+    const user = this.instances.find(user => user.login === login);
+    if (!user) {
+      throw new DataNotFoundError(errors.USER_NOT_EXIST(login));
+    }
+
+    if (user.password !== password) {
+      throw new AuthError(errors.INVALID_PASSWORD());
+    }
+
+    return user;
+  };
+}
+
+module.exports = { UserRepository, AuthError };

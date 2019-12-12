@@ -4,6 +4,7 @@ class Admin {
   constructor({
     id = nextId++,
     login,
+    password,
     mail,
     name,
     gender,
@@ -11,7 +12,7 @@ class Admin {
   }) {
     this.id = id;
     this.login = login;
-    this.password = this.password;
+    this.password = password;
     this.mail = mail;
     this.name = name;
     this.gender = gender;

@@ -1,6 +1,11 @@
+const { validateRequired } = require('./validateRequired');
+
 const parseErrors = errors => {
   if (!errors) {
     return null;
+  }
+  if (!Array.isArray(errors)) {
+    errors = [errors];
   }
   if (errors.filter(Boolean).length === 0) {
     return null;
@@ -11,13 +16,16 @@ const parseErrors = errors => {
 const validateData = schema => data => {
   const errors = {};
 
-  for (let [key, value] of Object.entries(data)) {
-    const { required = false, validators = [] } = schema[key] || {};
+  for (let [key, { required = false, validators = [] }] of Object.entries(
+    schema,
+  )) {
+    const value = data[key];
     if (!required && !value) {
       continue;
     }
     const fieldErrors = parseErrors(
-      validators.map(validator => validator(value)),
+      (required && validateRequired(value)) ||
+        validators.map(validator => validator(value)),
     );
     if (fieldErrors) {
       errors[key] = fieldErrors;
@@ -31,7 +39,7 @@ const validateData = schema => data => {
   return errors;
 };
 
-validateData.parse = schema => requestData => {
+validateData.parse = schema => (requestData = {}) => {
   const allowedKeys = Object.keys(schema);
   const data = {};
   for (let [key, value] of Object.entries(requestData)) {
