@@ -4,7 +4,6 @@ const { UserRepository } = require('../repositories/memory/User');
 const {
   validateSchema,
   validateLength,
-  validateNumber,
   validateString,
   validateStringOrNumber,
 } = require('../validators');
@@ -65,7 +64,7 @@ add.schema = {
       validateString,
     ],
   },
-  desctiption: {
+  description: {
     required: true,
     validators: [
       value => validateLength(value, { minLength: 20, maxLength: 200 }),
@@ -104,7 +103,7 @@ edit.schema = {
       validateString,
     ],
   },
-  desctiption: {
+  description: {
     required: true,
     validators: [
       value => validateLength(value, { minLength: 20, maxLength: 200 }),
