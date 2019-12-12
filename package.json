@@ -1,8 +1,7 @@
 {
   "name": "tin-crud",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/src/app.js",
+  "main": "src/app.js",
   "author": "Marcin Moch",
   "license": "MIT",
   "devDependencies": {
