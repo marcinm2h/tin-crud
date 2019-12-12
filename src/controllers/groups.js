@@ -1,5 +1,6 @@
 const { Group } = require('../models/Group');
 const { GroupRepository } = require('../repositories/memory/Group');
+const { PostRepository } = require('../repositories/memory/Post');
 const { UserRepository } = require('../repositories/memory/User');
 const {
   validateSchema,
@@ -22,7 +23,12 @@ const details = (req, res) => {
   const id = parseInt(req.params.id);
   const groupRepository = new GroupRepository();
   const group = groupRepository.find(id);
-  groupRepository.save();
+
+  const postRepository = new PostRepository();
+  group.posts = group.posts.map(id => postRepository.find(id));
+
+  const userRepository = new UserRepository();
+  group.users = group.users.map(id => userRepository.find(id));
 
   return res.json({
     data: group,
