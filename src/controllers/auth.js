@@ -8,8 +8,9 @@ const {
 } = require('../validators');
 
 const login = (req, res) => {
-  const data = validateData.parse(login.schema)(req.body.data);
-  const errors = validateData(login.schema)(data);
+  const { schema } = login;
+  const data = validateData.parse(schema)(req.body.data);
+  const errors = validateData(schema)(data);
   if (errors) {
     return res.json({
       errors,
@@ -45,8 +46,9 @@ login.schema = {
 };
 
 const loginAdmin = (req, res) => {
-  const data = validateData.parse(login.schema)(req.body.data);
-  const errors = validateData(login.schema)(data);
+  const { schema } = loginAdmin;
+  const data = validateData.parse(schema)(req.body.data);
+  const errors = validateData(schema)(data);
   if (errors) {
     return res.json({
       errors,

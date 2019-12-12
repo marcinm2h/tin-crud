@@ -43,8 +43,9 @@ const details = (req, res) => {
 };
 
 const add = (req, res) => {
-  const data = validateData.parse(add.schema)(req.body.data);
-  const errors = validateData(add.schema)(data);
+  const { schema } = add;
+  const data = validateData.parse(schema)(req.body.data);
+  const errors = validateData(schema)(data);
   if (errors) {
     return res.json({
       errors,
@@ -90,8 +91,9 @@ add.schema = {
 };
 
 const edit = (req, res) => {
-  const data = validateData.parse(add.schema)(req.body.data);
-  const errors = validateData(add.schema)(data);
+  const { schema } = edit;
+  const data = validateData.parse(schema)(req.body.data);
+  const errors = validateData(schema)(data);
   if (errors) {
     return res.json({
       errors,
