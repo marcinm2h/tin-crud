@@ -19,8 +19,8 @@ const list = (req, res) => {
 };
 
 const details = (req, res) => {
-  const groupRepository = new GroupRepository();
   const id = parseInt(req.params.id);
+  const groupRepository = new GroupRepository();
   const group = groupRepository.find(id);
   groupRepository.save();
 
@@ -119,9 +119,9 @@ edit.schema = {
 };
 
 const remove = (req, res) => {
+  const id = parseInt(req.params.id);
   const groupRepository = new GroupRepository();
   const userRepository = new UserRepository();
-  const id = parseInt(req.params.id);
   const group = groupRepository.find(id);
 
   group.users.forEach(userId => {
@@ -146,9 +146,9 @@ const remove = (req, res) => {
 };
 
 const join = (req, res) => {
+  const id = parseInt(req.params.id);
   const groupRepository = new GroupRepository();
   const userRepository = new UserRepository();
-  const id = parseInt(req.params.id);
   const group = groupRepository.find(id);
   const user = userRepository.find(req.session.userId);
 
@@ -166,9 +166,9 @@ const join = (req, res) => {
 };
 
 const leave = (req, res) => {
+  const id = parseInt(req.params.id);
   const groupRepository = new GroupRepository();
   const userRepository = new UserRepository();
-  const id = parseInt(req.params.id);
   const group = groupRepository.find(id);
   const user = userRepository.find(req.session.userId);
 
