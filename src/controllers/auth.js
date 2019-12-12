@@ -25,9 +25,7 @@ const login = (req, res) => {
   req.session.loggedIn = true;
 
   return res.json({
-    data: {
-      sid: req.sessionID,
-    },
+    data: {},
   });
 };
 
