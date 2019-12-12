@@ -2,8 +2,9 @@ const { Group } = require('../models/Group');
 const { GroupRepository } = require('../repositories/memory/Group');
 const { UserRepository } = require('../repositories/memory/User');
 const {
-  validateData,
+  validateSchema,
   validateLength,
+  validateNumber,
   validateString,
   validateStringOrNumber,
 } = require('../validators');
@@ -20,7 +21,8 @@ const list = (req, res) => {
 
 const details = (req, res) => {
   const groupRepository = new GroupRepository();
-  const group = groupRepository.find(req.params.id);
+  const id = parseInt(req.params.id);
+  const group = groupRepository.find(id);
   groupRepository.save();
 
   return res.json({
@@ -29,13 +31,9 @@ const details = (req, res) => {
 };
 
 const add = (req, res) => {
-  const { schema } = add;
-  const data = validateData.parse(schema)(req.body.data);
-  const errors = validateData(schema)(data);
+  const { errors, data } = validateSchema(add.schema)(req.body.data);
   if (errors) {
-    return res.json({
-      errors,
-    });
+    return res.json({ errors });
   }
 
   const groupRepository = new GroupRepository();
@@ -83,17 +81,14 @@ add.schema = {
 };
 
 const edit = (req, res) => {
-  const { schema } = edit;
-  const data = validateData.parse(schema)(req.body.data);
-  const errors = validateData(schema)(data);
+  const { errors, data } = validateSchema(edit.schema)(req.body.data);
   if (errors) {
-    return res.json({
-      errors,
-    });
+    return res.json({ errors });
   }
 
   const groupRepository = new GroupRepository();
-  groupRepository.edit(req.params.id, data);
+  const id = parseInt(req.params.id);
+  groupRepository.edit(id, data);
   groupRepository.save();
 
   return res.json({
@@ -151,4 +146,42 @@ const remove = (req, res) => {
   });
 };
 
-module.exports = { list, details, add, edit, remove };
+const join = (req, res) => {
+  const groupRepository = new GroupRepository();
+  const userRepository = new UserRepository();
+  const id = parseInt(req.params.id);
+  const group = groupRepository.find(id);
+  const user = userRepository.find(req.session.userId);
+
+  if (!group.users.contains(user.id)) {
+    group.users.push(user.id);
+    user.groupsIn.push(group.id);
+
+    userRepository.save();
+    groupRepository.save();
+  }
+
+  return res.json({
+    data: {},
+  });
+};
+
+const leave = (req, res) => {
+  const groupRepository = new GroupRepository();
+  const userRepository = new UserRepository();
+  const id = parseInt(req.params.id);
+  const group = groupRepository.find(id);
+  const user = userRepository.find(req.session.userId);
+
+  group.users.filter(userId => userId !== user.id);
+  user.groupsIn.filter(groupId => groupId !== group.id);
+
+  userRepository.save();
+  groupRepository.save();
+
+  return res.json({
+    data: {},
+  });
+};
+
+module.exports = { list, details, add, edit, remove, join, leave };

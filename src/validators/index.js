@@ -1,5 +1,5 @@
 const { errors } = require('./errors');
-const { validateData } = require('./validateData');
+const { validateData, validateSchema } = require('./validateData');
 const { validateBoolean } = require('./validateBoolean');
 const { validateEmail } = require('./validateEmail');
 const { validateDate } = require('./validateDate');
@@ -14,6 +14,7 @@ const { validateUrl } = require('./validateUrl');
 module.exports = {
   errors,
   validateData,
+  validateSchema,
   validateBoolean,
   validateEmail,
   validateDate,

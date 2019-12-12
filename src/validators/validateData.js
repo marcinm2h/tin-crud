@@ -50,6 +50,13 @@ validateData.parse = schema => (requestData = {}) => {
   return data;
 };
 
+const validateSchema = schema => requestData => {
+  const data = validateData.parse(schema)(requestData);
+  const errors = validateData(schema)(data);
+  return { errors, data };
+};
+
 module.exports = {
   validateData,
+  validateSchema,
 };

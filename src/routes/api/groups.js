@@ -5,6 +5,8 @@ const {
   add,
   edit,
   remove,
+  leave,
+  join,
 } = require('../../controllers/groups');
 const { auth } = require('../auth');
 
@@ -16,8 +18,12 @@ router.get('/groups/:id', auth.required, details);
 
 router.post('/groups', auth.required, add);
 
-router.put('/groups/:id', auth.required, edit);
+router.put('/groups/:id', auth.admin, edit);
 
-router.delete('/groups/:id', auth.required, remove);
+router.delete('/groups/:id', auth.admin, remove);
+
+router.post('/groups/join/:id', auth.required, join);
+
+router.post('/groups/leave/:id', auth.required, leave);
 
 module.exports = { groups: router };
