@@ -4,6 +4,7 @@ const { auth } = require('./auth');
 const { admins } = require('./admins');
 const { comments } = require('./comments');
 const { groups } = require('./groups');
+const { home } = require('./home');
 const { posts } = require('./posts');
 const { users } = require('./users');
 
@@ -17,6 +18,7 @@ router.use(auth);
 router.use(admins);
 router.use(comments);
 router.use(groups);
+router.use(home);
 router.use(posts);
 router.use(users);
 

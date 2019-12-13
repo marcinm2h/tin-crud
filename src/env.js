@@ -9,7 +9,7 @@ module.exports = {
   __DEV__: NODE_ENV === 'development',
   NODE_ENV,
   NO_AUTH: process.env.NO_AUTH,
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 3001,
   SESSION_MAX_AGE: process.env.SESSION_MAX_AGE || TWO_HOURS,
   SESSION_NAME: process.env.SESSION_NAME || 'sid',
   SESSION_SECRET: process.env.SESSION_SECRET || '4a345091',
