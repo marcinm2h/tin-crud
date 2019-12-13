@@ -4,7 +4,7 @@ class Group {
   constructor({
     id = nextId++,
     name,
-    desctiption,
+    description,
     tag,
     isHidden = false,
     creationDate = Date.now(),
@@ -14,7 +14,7 @@ class Group {
   }) {
     this.id = id;
     this.name = name;
-    this.desctiption = desctiption;
+    this.description = description;
     this.tag = tag;
     this.isHidden = isHidden;
     this.creationDate = creationDate; // TODO: timestamp -> Date

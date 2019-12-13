@@ -76,31 +76,31 @@ const initData = () => {
     {
       name: 'programming',
       tag: 'programming',
-      desctiption: 'Programming, Security, and other IT stuff',
+      description: 'Programming, Security, and other IT stuff',
     },
     {
       name: 'javascript',
       tag: 'javascript',
-      desctiption: 'JavaScript',
+      description: 'JavaScript',
     },
     {
       name: 'beer',
       tag: 'beer',
-      desctiption: 'All about beers',
+      description: 'All about beers',
     },
     {
       name: 'BeerLovers',
       tag: 'beer-lovers',
-      desctiption: 'Just for beer lovers',
+      description: 'Just for beer lovers',
     },
   ].forEach(data => groupRepository.add(new Group(data)));
 
   const postRepository = new PostRepository();
   [
-    { url: 'http://google.com', desctiption: 'Ciekawa strona' },
-    { url: 'http://onet.pl', desctiption: 'Wiadomośći onet' },
-    { url: 'https://news.ycombinator.com', desctiption: 'Hacker News' },
-    { url: 'https://twitter.com', desctiption: 'Twitter' },
+    { url: 'http://google.com', description: 'Ciekawa strona' },
+    { url: 'http://onet.pl', description: 'Wiadomośći onet' },
+    { url: 'https://news.ycombinator.com', description: 'Hacker News' },
+    { url: 'https://twitter.com', description: 'Twitter' },
   ].forEach(data => postRepository.add(new Post(data)));
 
   const commentRepository = new CommentRepository();

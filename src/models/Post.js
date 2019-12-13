@@ -6,7 +6,7 @@ class Post {
     url,
     votesFor = 0,
     votesAgainst = 0,
-    desctiption,
+    description,
     creationDate = Date.now(),
     comments = [],
     group,
@@ -16,7 +16,7 @@ class Post {
     this.url = url;
     this.votesFor = votesFor;
     this.votesAgainst = votesAgainst;
-    this.desctiption = desctiption;
+    this.description = description;
     this.creationDate = creationDate; // TODO: timestamp -> Date
 
     this.comments = comments;

@@ -11,7 +11,9 @@ const posts = (req, res) => {
   const filteredPosts = allPosts.filter(post => !post.group.isHidden);
 
   return res.json({
-    data: filteredPosts,
+    data: {
+      posts: filteredPosts,
+    },
   });
 };
 
