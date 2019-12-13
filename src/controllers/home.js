@@ -9,10 +9,11 @@ const posts = (req, res) => {
     group: groupRepository.find(post.group),
   }));
   const filteredPosts = allPosts.filter(post => !post.group.isHidden);
+  const sortedPosts = filteredPosts.reverse();
 
   return res.json({
     data: {
-      posts: filteredPosts,
+      posts: sortedPosts,
     },
   });
 };

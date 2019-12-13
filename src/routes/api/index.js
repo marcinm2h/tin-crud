@@ -5,6 +5,7 @@ const { admins } = require('./admins');
 const { comments } = require('./comments');
 const { groups } = require('./groups');
 const { home } = require('./home');
+const { init } = require('./init');
 const { posts } = require('./posts');
 const { users } = require('./users');
 
@@ -19,6 +20,7 @@ router.use(admins);
 router.use(comments);
 router.use(groups);
 router.use(home);
+router.use(init);
 router.use(posts);
 router.use(users);
 
