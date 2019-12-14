@@ -132,6 +132,7 @@ const remove = (req, res) => {
   const id = parseInt(req.params.id);
   const groupRepository = new GroupRepository();
   const userRepository = new UserRepository();
+  const postRepository = new PostRepository();
   const group = groupRepository.find(id);
 
   group.users.forEach(userId => {
@@ -146,8 +147,17 @@ const remove = (req, res) => {
 
   groupRepository.remove(id);
 
-  // TODO: remove postst, remove posts comments, remove posts owners, remove posts comments owners
+  group.posts.forEach(id => {
+    const post = postRepository.find(id);
+    const author = userRepository.find(post.author);
+    author.posts = author.posts.filter(id => id !== post.id);
+    postRepository.remove(post.id);
+  });
 
+  // TODO: remove posts comments, remove posts comments owners
+
+  postRepository.save();
+  userRepository.save();
   groupRepository.save();
 
   return res.json({
