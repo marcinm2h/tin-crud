@@ -31,9 +31,13 @@ const details = (req, res) => {
   post.group = groupRepository.find(post.group);
   post.author = userRepository.find(post.author);
   post.comments = post.comments.map(postId => commentRepository.find(postId));
+  post.comments = post.comments.map(comment => {
+    comment.author = userRepository.find(comment.author).login;
+    return comment;
+  });
 
   return res.json({
-    data: post,
+    data: { post },
   });
 };
 
@@ -70,7 +74,9 @@ const add = (req, res) => {
   postRepository.save();
 
   return res.json({
-    data: post,
+    data: {
+      post,
+    },
   });
 };
 

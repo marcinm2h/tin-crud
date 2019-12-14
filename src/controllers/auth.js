@@ -64,7 +64,9 @@ const loginAdmin = (req, res) => {
   req.session.admin = true;
 
   return res.json({
-    data: {},
+    data: {
+      admin,
+    },
   });
 };
 
