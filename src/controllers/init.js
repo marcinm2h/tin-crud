@@ -3,7 +3,7 @@ const { GroupRepository } = require('../repositories/memory/Group');
 const init = (req, res) => {
   const groupRepository = new GroupRepository();
   const allGroups = groupRepository.list();
-  const topGropus = allGroups.slice(0, 10);
+  const topGropus = allGroups.slice(0, 2);
 
   return res.json({
     data: {

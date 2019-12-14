@@ -15,7 +15,9 @@ const list = (req, res) => {
   groupRepository.save();
 
   return res.json({
-    data: groups,
+    data: {
+      groups,
+    },
   });
 };
 
@@ -58,7 +60,9 @@ const add = (req, res) => {
   userRepository.save();
 
   return res.json({
-    data: group,
+    data: {
+      group,
+    },
   });
 };
 

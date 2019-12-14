@@ -22,10 +22,10 @@ class AdminRepository extends Repository {
     return user;
   };
 
-  find = id => {
-    const instance = Repository.prototype.find();
-    return omit(instance, ['password']);
-  };
+  find(id) {
+    const admin = Repository.prototype.find.call(this, id);
+    return omit(admin, ['password']);
+  }
 }
 
 module.exports = { AdminRepository, AuthError };

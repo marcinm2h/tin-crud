@@ -19,13 +19,13 @@ class UserRepository extends Repository {
       throw new AuthError(errors.INVALID_PASSWORD());
     }
 
-    return user;
+    return omit(user, ['password']);
   };
 
-  find = id => {
-    const instance = Repository.prototype.find();
-    return omit(instance, ['password']);
-  };
+  find(id) {
+    const user = Repository.prototype.find.call(this, id);
+    return omit(user, ['password']);
+  }
 }
 
 module.exports = { UserRepository, AuthError };

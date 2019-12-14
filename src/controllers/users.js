@@ -39,7 +39,9 @@ const details = (req, res) => {
   user.posts = user.posts.map(id => postRepository.find(id));
 
   return res.json({
-    data: user,
+    data: {
+      user,
+    },
   });
 };
 

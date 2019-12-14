@@ -51,8 +51,11 @@ const add = (req, res) => {
   const groupRepository = new GroupRepository();
 
   const user = userRepository.find(req.session.userId);
-  const group = groupRepository.find(groupId);
+  const group = groupRepository.find(parseInt(groupId));
   const post = new Post(data);
+  if (!post.url.includes('//')) {
+    post.url = `//${[post.url]}`;
+  }
 
   post.author = user.id;
   user.posts.push(post.id);

@@ -30,13 +30,13 @@ class Repository {
 
   list = () => [...this.instances];
 
-  find = id => {
+  find(id) {
     const instance = this.instances.find(instance => instance.id === id);
     if (!instance) {
       throw new DataNotFoundError(errors.DATA_NOT_FOUND());
     }
     return { ...instance };
-  };
+  }
 
   add = instance => this.instances.push(instance);
 
