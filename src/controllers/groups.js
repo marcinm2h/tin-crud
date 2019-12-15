@@ -33,7 +33,9 @@ const details = (req, res) => {
   group.users = group.users.map(id => userRepository.find(id));
 
   return res.json({
-    data: group,
+    data: {
+      group,
+    },
   });
 };
 
