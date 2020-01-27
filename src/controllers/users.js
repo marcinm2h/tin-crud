@@ -5,12 +5,14 @@ const { CommentRepository } = require('../repositories/memory/Comment');
 const { GroupRepository } = require('../repositories/memory/Group');
 const { PostRepository } = require('../repositories/memory/Post');
 const {
+  validateSchema,
   validateData,
   validateBoolean,
   validateEmail,
   validateLength,
   validateString,
   validateStringOrNumber,
+  validatePasswordConfirm,
 } = require('../validators');
 
 const list = (req, res) => {
@@ -46,9 +48,7 @@ const details = (req, res) => {
 };
 
 const add = (req, res) => {
-  const { schema } = add;
-  const data = validateData.parse(schema)(req.body.data);
-  const errors = validateData(schema)(data);
+  const { data, errors } = validateSchema(add.schema)(req.body.data);
   if (errors) {
     return res.json({
       errors,
@@ -72,6 +72,17 @@ add.schema = {
       value => validateLength(value, { minLength: 3, maxLength: 20 }),
       validateStringOrNumber,
     ],
+  },
+  password: {
+    required: true,
+    validators: [
+      value => validateLength(value, { minLength: 3, maxLength: 20 }),
+      validateStringOrNumber,
+    ],
+  },
+  passwordConfirm: {
+    required: true,
+    validators: [validatePasswordConfirm],
   },
   mail: {
     required: true,

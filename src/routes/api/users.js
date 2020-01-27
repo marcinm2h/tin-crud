@@ -8,7 +8,7 @@ router.get('/users', auth.required, list);
 
 router.get('/users/:id', auth.required, details);
 
-router.post('/users', auth.required, add);
+router.post('/users', add);
 
 router.put('/users/:id', auth.required, edit);
 

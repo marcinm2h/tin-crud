@@ -6,6 +6,7 @@ const { validateDate } = require('./validateDate');
 const { validateLength } = require('./validateLength');
 const { validateNumber } = require('./validateNumber');
 const { validatePostalCode } = require('./validatePostalCode');
+const { validatePasswordConfirm } = require('./validatePasswordConfirm');
 const { validateRequired } = require('./validateRequired');
 const { validateString } = require('./validateString');
 const { validateStringOrNumber } = require('./validateStringOrNumber');
@@ -20,6 +21,7 @@ module.exports = {
   validateDate,
   validateLength,
   validateNumber,
+  validatePasswordConfirm,
   validatePostalCode,
   validateRequired,
   validateString,

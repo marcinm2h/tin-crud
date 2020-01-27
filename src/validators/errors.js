@@ -1,6 +1,8 @@
 const formatDate = date => new Intl.DateTimeFormat('pl-PL').format(date);
 
 const errors = {
+  CONFIRM: field =>
+    `Błędna wartość. Pole musi mieć tę samą wartość co pole ${field}.`,
   INVALID_DATA_TYPE: () => 'Niepoprawne dane.',
   INVALID_EMAIL: () => 'Niepoprawny adres email.',
   MAX_DATE: maxDate =>

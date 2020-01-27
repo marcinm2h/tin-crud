@@ -25,7 +25,7 @@ const validateData = schema => data => {
     }
     const fieldErrors = parseErrors(
       (required && validateRequired(value)) ||
-        validators.map(validator => validator(value)),
+        validators.map(validator => validator(value, data)),
     );
     if (fieldErrors) {
       errors[key] = fieldErrors;
