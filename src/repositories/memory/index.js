@@ -45,7 +45,7 @@ class Repository {
     if (!instance) {
       throw new DataNotFoundError(errors.DATA_NOT_FOUND());
     }
-    Object.assign(instance, newData);
+    return Object.assign(instance, newData);
   };
 
   remove = id => {

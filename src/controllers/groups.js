@@ -99,11 +99,14 @@ const edit = (req, res) => {
 
   const groupRepository = new GroupRepository();
   const id = parseInt(req.params.id);
-  groupRepository.edit(id, data);
+  debugger;
+  const group = groupRepository.edit(id, data);
   groupRepository.save();
 
   return res.json({
-    data: {},
+    data: {
+      group,
+    },
   });
 };
 
