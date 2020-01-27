@@ -99,7 +99,6 @@ const edit = (req, res) => {
 
   const groupRepository = new GroupRepository();
   const id = parseInt(req.params.id);
-  debugger;
   const group = groupRepository.edit(id, data);
   groupRepository.save();
 
