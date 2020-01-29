@@ -101,7 +101,7 @@ add.schema = {
 };
 
 const edit = (req, res) => {
-  const { errors, data } = validateSchema(add.schema)(req.body.data);
+  const { errors, data } = validateSchema(edit.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
