@@ -2,6 +2,7 @@ const { Group } = require('../models/Group');
 const { GroupRepository } = require('../repositories/memory/Group');
 const { PostRepository } = require('../repositories/memory/Post');
 const { UserRepository } = require('../repositories/memory/User');
+const { CommentRepository } = require('../repositories/memory/Comment');
 const {
   validateSchema,
   validateLength,
@@ -137,6 +138,7 @@ const remove = (req, res) => {
   const groupRepository = new GroupRepository();
   const userRepository = new UserRepository();
   const postRepository = new PostRepository();
+  const commentRepository = new CommentRepository();
   const group = groupRepository.find(id);
 
   group.users.forEach(userId => {
@@ -145,16 +147,26 @@ const remove = (req, res) => {
   });
 
   const owner = userRepository.find(group.owner);
-  owner.groupsCreated = owner.groupsCreated.filter(
-    groupId => groupId !== group.id,
-  );
+  userRepository.edit(owner.id, {
+    groupsCreated: owner.groupsCreated.filter(groupId => groupId !== group.id),
+  });
 
   groupRepository.remove(id);
 
   group.posts.forEach(id => {
     const post = postRepository.find(id);
     const author = userRepository.find(post.author);
-    author.posts = author.posts.filter(id => id !== post.id);
+    userRepository.edit(author.id, {
+      posts: author.posts.filter(id => id !== post.id),
+    });
+    post.comments.forEach(commentId => {
+      const comment = commentRepository.find(commentId);
+      const author = commentRepository.find(comment.author);
+      userRepository.edit(author.id, {
+        comments: author.comments.filter(commentId => comment.id),
+      });
+      commentRepository.remove(comment.id);
+    });
     postRepository.remove(post.id);
   });
 

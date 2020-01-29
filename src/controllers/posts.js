@@ -144,8 +144,12 @@ const remove = (req, res) => {
   const user = userRepository.find(post.author);
   const group = groupRepository.find(post.group);
 
-  user.posts = user.posts.filter(postId => postId !== post.id);
-  group.posts = group.posts.filter(groupId => groupId !== group.id);
+  userRepository.edit(user.id, {
+    posts: user.posts.filter(postId => postId !== post.id),
+  });
+  groupRepository.edit(group.id, {
+    posts: group.posts.filter(postId => postId !== post.id),
+  });
 
   post.comments.forEach(commentId => {
     commentRepository.remove(commentId);

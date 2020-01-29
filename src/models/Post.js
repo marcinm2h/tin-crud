@@ -17,7 +17,7 @@ class Post {
     this.votesFor = votesFor;
     this.votesAgainst = votesAgainst;
     this.description = description;
-    this.creationDate = creationDate; // TODO: timestamp -> Date
+    this.creationDate = creationDate;
 
     this.comments = comments;
     this.group = group;
