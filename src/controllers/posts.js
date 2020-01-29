@@ -4,11 +4,13 @@ const { GroupRepository } = require('../repositories/memory/Group');
 const { UserRepository } = require('../repositories/memory/User');
 const { CommentRepository } = require('../repositories/memory/Comment');
 const {
+  errors,
   validateSchema,
   validateLength,
   validateNumber,
   validateUrl,
 } = require('../validators');
+const { INVALID_VOTE } = errors;
 
 const list = (req, res) => {
   const postRepository = new PostRepository();
@@ -167,4 +169,70 @@ const remove = (req, res) => {
   });
 };
 
-module.exports = { list, details, add, edit, remove };
+const vote = (req, res) => {
+  const { errors, data } = validateSchema(vote.schema)(req.body.data);
+  if (errors) {
+    return res.json({ errors });
+  }
+
+  const postId = parseInt(req.params.id);
+  const { type } = data;
+
+  const postRepository = new PostRepository();
+  const userRepository = new UserRepository();
+
+  const user = userRepository.find(req.session.userId);
+  const post = postRepository.find(postId);
+
+  debugger;
+
+  if (post.usersVotedAgainst.includes(user.id) && type === 'against') {
+    throw new Error(INVALID_VOTE());
+  }
+
+  if (post.usersVotedFor.includes(user.id) && type === 'for') {
+    throw new Error(INVALID_VOTE());
+  }
+
+  if (type === 'against') {
+    postRepository.edit(post.id, {
+      votesAgainst: post.votesAgainst + 1,
+      votesFor: post.usersVotedFor.includes(user.id)
+        ? post.votesFor - 1
+        : post.votesFor,
+      usersVotedAgainst: post.usersVotedAgainst.concat(user.id),
+      usersVotedFor: post.usersVotedFor.filter(userId => userId !== user.id),
+    });
+  }
+
+  if (type === 'for') {
+    postRepository.edit(post.id, {
+      votesFor: post.votesFor + 1,
+      votesAgainst: post.usersVotedAgainst.includes(user.id)
+        ? post.votesAgainst - 1
+        : post.votesAgainst,
+      usersVotedFor: post.usersVotedFor.concat(user.id),
+      usersVotedAgainst: post.usersVotedAgainst.filter(
+        userId => userId !== user.id,
+      ),
+    });
+  }
+
+  postRepository.save();
+
+  return res.json({
+    data: {},
+  });
+};
+
+vote.schema = {
+  type: {
+    required: true,
+    validators: [
+      value =>
+        ['for', 'against'].includes(value) ? null : errors.INVALID_VOTE(),
+    ],
+  },
+};
+
+module.exports = { list, details, add, edit, remove, vote };

@@ -11,6 +11,8 @@ class Post {
     comments = [],
     group,
     author,
+    usersVotedAgainst = [],
+    usersVotedFor = [],
   }) {
     this.id = id;
     this.url = url;
@@ -22,6 +24,8 @@ class Post {
     this.comments = comments;
     this.group = group;
     this.author = author;
+    this.usersVotedAgainst = usersVotedAgainst;
+    this.usersVotedFor = usersVotedFor;
   }
 }
 
