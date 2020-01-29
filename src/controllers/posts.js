@@ -182,9 +182,7 @@ const vote = (req, res) => {
   const userRepository = new UserRepository();
 
   const user = userRepository.find(req.session.userId);
-  const post = postRepository.find(postId);
-
-  debugger;
+  let post = postRepository.find(postId);
 
   if (post.usersVotedAgainst.includes(user.id) && type === 'against') {
     throw new Error(INVALID_VOTE());
@@ -195,18 +193,20 @@ const vote = (req, res) => {
   }
 
   if (type === 'against') {
-    postRepository.edit(post.id, {
+    post = {
+      ...post,
       votesAgainst: post.votesAgainst + 1,
       votesFor: post.usersVotedFor.includes(user.id)
         ? post.votesFor - 1
         : post.votesFor,
       usersVotedAgainst: post.usersVotedAgainst.concat(user.id),
       usersVotedFor: post.usersVotedFor.filter(userId => userId !== user.id),
-    });
+    };
   }
 
   if (type === 'for') {
-    postRepository.edit(post.id, {
+    post = {
+      ...post,
       votesFor: post.votesFor + 1,
       votesAgainst: post.usersVotedAgainst.includes(user.id)
         ? post.votesAgainst - 1
@@ -215,13 +215,17 @@ const vote = (req, res) => {
       usersVotedAgainst: post.usersVotedAgainst.filter(
         userId => userId !== user.id,
       ),
-    });
+    };
   }
+
+  postRepository.edit(post.id, post);
 
   postRepository.save();
 
   return res.json({
-    data: {},
+    data: {
+      post,
+    },
   });
 };
 
