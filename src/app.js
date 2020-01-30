@@ -15,9 +15,59 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('db.sqlite');
 
 db.serialize(() => {
-  db.each('SELECT * FROM Admin', (err, row) => {
-    console.log(row);
-  });
+  // db.each('SELECT * FROM Admin', (err, row) => {
+  //   console.log(row);
+  // });
+  const serializeValue = value => {
+    if (typeof value === 'boolean') {
+      return value ? 1 : 0;
+    }
+
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = `${value.getMonth() + 1}`.padStart(2, '0');
+      const day = `${value.getDate()}`.padStart(2, '0');
+      const hours = `${value.getHours()}`.padStart(2, '0');
+      const minutes = `${value.getMinutes()}`.padStart(2, '0');
+      const seconds = `${value.getSeconds()}`.padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    return value;
+  };
+
+  const insert = (table, values) => `INSERT INTO "${table}" (
+    ${Object.keys(values)
+      .map(key => `"${key}"`)
+      .join(',')}
+  ) VALUES (
+    ${Object.values(values)
+      .map(val => `"${serializeValue(val)}"`)
+      .join(',')}
+  );`;
+  console.log(
+    insert('Admin', {
+      login: 'admin2',
+      mail: 'admin2@example.com',
+      name: 'Janusz',
+      gender: true,
+      registerDate: new Date(),
+      password: 'test',
+    }),
+  );
+  db.run(
+    insert('Admin', {
+      login: 'admin3',
+      mail: 'admin2@example.com',
+      name: 'Janusz',
+      gender: true,
+      registerDate: new Date(),
+      password: 'test',
+    }),
+    err => {
+      console.log(err);
+    },
+  );
 });
 
 db.close();
