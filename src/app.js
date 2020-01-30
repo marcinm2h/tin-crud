@@ -11,6 +11,17 @@ const { routes } = require('./routes');
 const { errorHandler } = require('./errorHandler');
 const { requestLogger } = require('./requestLogger');
 
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('db.sqlite');
+
+db.serialize(() => {
+  db.each('SELECT * FROM Admin', (err, row) => {
+    console.log(row);
+  });
+});
+
+db.close();
+
 const app = express();
 
 app.use(
