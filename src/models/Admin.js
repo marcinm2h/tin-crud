@@ -16,7 +16,7 @@ class Admin {
     this.mail = mail;
     this.name = name;
     this.gender = gender;
-    this.registerDate = registerDate; // TODO: timestamp -> Date
+    this.registerDate = registerDate;
   }
 }
 
