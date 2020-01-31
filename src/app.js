@@ -14,6 +14,8 @@ const { requestLogger } = require('./requestLogger');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('db.sqlite');
 
+// const { Admin } = require
+
 db.serialize(() => {
   // db.each('SELECT * FROM Admin', (err, row) => {
   //   console.log(row);
@@ -36,7 +38,7 @@ db.serialize(() => {
     return value;
   };
 
-  const insert = (table, values) => `INSERT INTO "${table}" (
+  const insert = (model, values) => `INSERT INTO "${model}" (
     ${Object.keys(values)
       .map(key => `"${key}"`)
       .join(',')}
@@ -45,16 +47,7 @@ db.serialize(() => {
       .map(val => `"${serializeValue(val)}"`)
       .join(',')}
   );`;
-  console.log(
-    insert('Admin', {
-      login: 'admin2',
-      mail: 'admin2@example.com',
-      name: 'Janusz',
-      gender: true,
-      registerDate: new Date(),
-      password: 'test',
-    }),
-  );
+
   db.run(
     insert('Admin', {
       login: 'admin3',
@@ -68,6 +61,37 @@ db.serialize(() => {
       console.log(err);
     },
   );
+
+  const remove = (model, id) => `
+  DELETE FROM ${model} where id=${id} ;
+`;
+
+  db.run(remove('Admin', 1), (err, row) => {
+    console.log(err, row);
+  });
+
+  const details = (model, id) => `
+  SELECT * FROM ${model} WHERE id=${id};
+`;
+
+  console.log(details('Admin', 1));
+
+  db.get(details('Admin', 1), (error, row) => {
+    console.log(error, row);
+  });
+
+  const update = (model, id, values) => `UPDATE "${model}"
+  SET ${Object.entries(values)
+    .map(([key, val]) => `"${key}" = "${serializeValue(val)}"`)
+    .join(',')}
+  WHERE id=${id};
+`;
+
+  console.log(update('Admin', 1, { login: 'test' }));
+
+  db.run(update('Admin', 2, { login: 'test' }), (err, row) => {
+    console.log(err, row);
+  });
 });
 
 db.close();
