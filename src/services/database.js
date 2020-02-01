@@ -57,6 +57,12 @@ const details = (model, id) => `
 SELECT * FROM ${parseModelName(model)} WHERE id=${id};
 `;
 
+const find = (model, field) => `
+SELECT * FROM ${parseModelName(model)} WHERE ${Object.keys(field)[0]} = "${
+  Object.values(field)[0]
+}";
+`;
+
 class DbService {
   constructor() {
     this.__instance = new sqlite3.Database(DB_PATH);
@@ -132,6 +138,21 @@ class DbService {
 
   details(...args) {
     const query = details(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
+    return new Promise((resolve, reject) => {
+      this.__instance.get(query, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  find(...args) {
+    const query = find(...args);
     if (__DEV__) {
       console.log(query);
     }

@@ -1,11 +1,11 @@
 const { SESSION_NAME } = require('../env');
-const { AdminRepository } = require('../services/repositories/memory/Admin');
 const { UserRepository } = require('../services/repositories/memory/User');
 const {
   validateData,
   validateLength,
   validateStringOrNumber,
 } = require('../validators');
+const { AdminService } = require('../services/Admin');
 
 const login = (req, res) => {
   const { schema } = login;
@@ -45,7 +45,7 @@ login.schema = {
   },
 };
 
-const loginAdmin = (req, res) => {
+const loginAdmin = (req, res, next) => {
   const { schema } = loginAdmin;
   const data = validateData.parse(schema)(req.body.data);
   const errors = validateData(schema)(data);
@@ -55,19 +55,22 @@ const loginAdmin = (req, res) => {
     });
   }
 
-  const adminRepository = new AdminRepository();
-  const admin = adminRepository.login(data);
+  const adminService = new AdminService();
+  adminService
+    .login(data)
+    .then(admin => {
+      req.session.userId = admin.id;
+      req.session.login = admin.login;
+      req.session.loggedIn = true;
+      req.session.admin = true;
 
-  req.session.userId = admin.id;
-  req.session.login = admin.login;
-  req.session.loggedIn = true;
-  req.session.admin = true;
-
-  return res.json({
-    data: {
-      admin,
-    },
-  });
+      res.json({
+        data: {
+          admin,
+        },
+      });
+    })
+    .catch(next);
 };
 
 loginAdmin.schema = {
@@ -88,7 +91,7 @@ const logout = (req, res) => {
   req.session.destroy(() => {
     res.clearCookie(SESSION_NAME);
 
-    return res.json({
+    res.json({
       data: {},
     });
   });

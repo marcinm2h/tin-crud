@@ -1,9 +1,36 @@
 const { Admin } = require('../models/Admin');
 const { DbService } = require('./Database');
 
+class DataNotFoundError extends Error {}
+
+class AuthError extends Error {}
+
+const errors = {
+  ADMIN_NOT_EXIST: login => `Nie znaleziono administratora ${login}.`,
+  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
+};
+
 class AdminService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
     this.deps = deps;
+  }
+
+  login({ login, password }) {
+    const { DbService } = this.deps;
+    const db = new DbService();
+
+    return new Promise((resolve, reject) => {
+      db.find(Admin, { login })
+        .then(a => {
+          if (a.password !== password) {
+            reject(new AuthError(errors.INVALID_PASSWORD()));
+          }
+          resolve(new Admin(a));
+        })
+        .catch(() => {
+          reject(new DataNotFoundError(errors.ADMIN_NOT_EXIST(login)));
+        });
+    });
   }
 
   list() {
