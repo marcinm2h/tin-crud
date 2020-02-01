@@ -115,14 +115,14 @@ const initData = () => {
   groupRepository.instances.forEach(group => {
     const owner = randomEl(userRepository.instances);
     group.owner = owner.id;
-    owner.groupsCreated.push(group.id);
+    // owner.groupsCreated.push(group.id);
   });
 
   // User * --is in-- * Group
   groupRepository.instances.forEach(group => {
     group.users = userRepository.instances.map(user => user.id);
     userRepository.instances.forEach(user => {
-      user.groupsIn.push(group.id);
+      user.groups.push(group.id);
     });
   });
 

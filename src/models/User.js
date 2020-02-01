@@ -11,8 +11,7 @@ class User {
     registerDate = Date.now(),
     comments = [],
     posts = [],
-    groupsIn = [],
-    groupsCreated = [],
+    groups = [],
   }) {
     this.id = id;
     this.login = login;
@@ -24,8 +23,7 @@ class User {
 
     this.comments = comments;
     this.posts = posts;
-    this.groupsIn = groupsIn;
-    this.groupsCreated = groupsCreated;
+    this.groups = groups;
   }
 }
 

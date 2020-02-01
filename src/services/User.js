@@ -1,10 +1,11 @@
 const omit = require('lodash/omit');
 const { User } = require('../models/User');
 const { DbService } = require('./Database');
+const { PostService } = require('./Post');
 const { errors } = require('../validators/errors');
 
 class UserService {
-  constructor({ deps = { DbService }, autoClose = true } = {}) {
+  constructor({ deps = { DbService, PostService }, autoClose = true } = {}) {
     this.deps = deps;
     this.autoClose = autoClose;
   }
@@ -143,6 +144,14 @@ class UserService {
         resolve(item);
       });
     });
+  }
+
+  async posts(id) {
+    const { PostService } = this.deps;
+    const postService = new PostService();
+    const posts = await postService.find({ author: id });
+
+    return posts;
   }
 }
 

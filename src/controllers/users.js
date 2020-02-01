@@ -22,18 +22,21 @@ const list = (req, res, next) => {
     .catch(next);
 };
 
-// FIXME: posts, groups
-const details = (req, res, next) => {
-  const userService = new UserService();
+const details = async (req, res, next) => {
+  try {
+    const userService = new UserService();
+    let user = await userService.details(req.params.id);
+    const userPosts = await userService.posts(req.params.id);
+    user.posts = userPosts;
 
-  userService
-    .details(req.params.id)
-    .then(user => {
-      res.json({
-        data: user,
-      });
-    })
-    .catch(next);
+    res.json({
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 const add = (req, res, next) => {
