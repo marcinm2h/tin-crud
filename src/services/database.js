@@ -1,4 +1,4 @@
-const { DB_PATH } = require('../env');
+const { __DEV__, DB_PATH } = require('../env');
 const sqlite3 = require('sqlite3').verbose();
 
 const serializeValue = value => {
@@ -19,7 +19,14 @@ const serializeValue = value => {
   return value;
 };
 
-const insert = (model, values) => `INSERT INTO "${model}" (
+const parseBool = value => Boolean(value);
+
+const parseDate = value => new Date(value);
+
+const parseModelName = model =>
+  typeof model === 'string' ? model : model.name;
+
+const insert = (model, values) => `INSERT INTO "${parseModelName(model)}" (
   ${Object.keys(values)
     .map(key => `"${key}"`)
     .join(',')}
@@ -29,7 +36,9 @@ const insert = (model, values) => `INSERT INTO "${model}" (
     .join(',')}
 );`;
 
-const update = (model, id, { id: _, ...values }) => `UPDATE "${model}"
+const update = (model, id, { id: _, ...values }) => `UPDATE "${parseModelName(
+  model,
+)}"
 SET ${Object.entries(values)
   .map(([key, val]) => `"${key}" = "${serializeValue(val)}"`)
   .join(',')}
@@ -37,17 +46,15 @@ WHERE id=${id};
 `;
 
 const remove = (model, id) => `
-DELETE FROM ${model} where id=${id} ;
+DELETE FROM ${parseModelName(model)} where id=${id} ;
 `;
-const parseModelName = model =>
-  typeof model === 'string' ? model : model.name;
 
 const list = model => `
 SELECT * FROM ${parseModelName(model)}
 `;
 
 const details = (model, id) => `
-SELECT * FROM ${model} WHERE id=${id};
+SELECT * FROM ${parseModelName(model)} WHERE id=${id};
 `;
 
 class DbService {
@@ -63,9 +70,13 @@ class DbService {
     this.__instance.close();
   }
 
-  insert(...args) {
+  add(...args) {
+    const query = insert(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
     return new Promise((resolve, reject) => {
-      this.__instance.run(insert(...args), (err, result) => {
+      this.__instance.run(query, (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -74,9 +85,13 @@ class DbService {
     });
   }
 
-  update(...args) {
+  edit(...args) {
+    const query = update(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
     return new Promise((resolve, reject) => {
-      this.__instance.run(update(...args), (err, result) => {
+      this.__instance.run(query, (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -86,8 +101,12 @@ class DbService {
   }
 
   remove(...args) {
+    const query = remove(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
     return new Promise((resolve, reject) => {
-      this.__instance.run(remove(...args), (err, result) => {
+      this.__instance.run(query, (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -97,8 +116,12 @@ class DbService {
   }
 
   list(...args) {
+    const query = list(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
     return new Promise((resolve, reject) => {
-      this.__instance.all(list(...args), (err, result) => {
+      this.__instance.all(query, (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -108,8 +131,12 @@ class DbService {
   }
 
   details(...args) {
+    const query = details(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
     return new Promise((resolve, reject) => {
-      this.__instance.get(details(...args), (err, result) => {
+      this.__instance.get(query, (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -121,4 +148,6 @@ class DbService {
 
 module.exports = {
   DbService,
+  parseBool,
+  parseDate,
 };
