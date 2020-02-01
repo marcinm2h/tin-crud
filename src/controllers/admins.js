@@ -6,7 +6,9 @@ const list = (req, res, next) => {
     .list()
     .then(admins => {
       res.json({
-        data: admins,
+        data: {
+          admins,
+        },
       });
     })
     .catch(next);
@@ -19,7 +21,9 @@ const details = (req, res, next) => {
     .details(req.params.id)
     .then(admin => {
       res.json({
-        data: admin,
+        data: {
+          admin,
+        },
       });
     })
     .catch(next);

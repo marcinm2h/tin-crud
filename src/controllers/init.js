@@ -1,15 +1,19 @@
-const { GroupRepository } = require('../services/repositories/memory/Group');
+const { GroupService } = require('../services/Group');
 
-const init = (req, res) => {
-  const groupRepository = new GroupRepository();
-  const allGroups = groupRepository.list();
-  const topGropus = allGroups.slice(0, 2);
+const TOP_GROUPS_COUNT = 5;
 
-  return res.json({
-    data: {
-      groups: topGropus,
-    },
-  });
+const init = (req, res, next) => {
+  const groupService = new GroupService();
+  groupService
+    .list()
+    .then(groups => {
+      res.json({
+        data: {
+          groups: groups.slice(0, TOP_GROUPS_COUNT),
+        },
+      });
+    })
+    .catch(next);
 };
 
 module.exports = {
