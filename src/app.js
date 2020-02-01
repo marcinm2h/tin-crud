@@ -6,98 +6,60 @@ const {
   SESSION_SECRET,
   SESSION_NAME,
   SESSION_MAX_AGE,
-  DB_PATH,
 } = require('./env');
 const { routes } = require('./routes');
 const { errorHandler } = require('./errorHandler');
 const { requestLogger } = require('./requestLogger');
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(DB_PATH);
+const db = require('./services/database');
 
-db.serialize(() => {
-  // db.each('SELECT * FROM Admin', (err, row) => {
-  //   console.log(row);
-  // });
-  const serializeValue = value => {
-    if (typeof value === 'boolean') {
-      return value ? 1 : 0;
-    }
+db.query(() => {
+  db.insert('Admin', {
+    login: 'admin3__XD',
+    mail: 'admin2@example.com',
+    name: 'Janusz',
+    gender: true,
+    registerDate: new Date(),
+    password: 'test',
+  })
+    .then(result => {
+      console.log('insert', { result }); // no return in any case
+    })
+    .catch(error => {
+      console.log({ error });
+    });
 
-    if (value instanceof Date) {
-      const year = value.getFullYear();
-      const month = `${value.getMonth() + 1}`.padStart(2, '0');
-      const day = `${value.getDate()}`.padStart(2, '0');
-      const hours = `${value.getHours()}`.padStart(2, '0');
-      const minutes = `${value.getMinutes()}`.padStart(2, '0');
-      const seconds = `${value.getSeconds()}`.padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
+  db.remove('Admin', 2)
+    .then(row => {
+      console.log('remove', { row }); // no return in any case
+    })
+    .catch(error => {
+      console.log({ error });
+    });
 
-    return value;
-  };
+  db.details('Admin', 3)
+    .then(row => {
+      console.log('details', { row });
+    })
+    .catch(error => {
+      console.log({ error });
+    });
 
-  const insert = (model, values) => `INSERT INTO "${model}" (
-    ${Object.keys(values)
-      .map(key => `"${key}"`)
-      .join(',')}
-  ) VALUES (
-    ${Object.values(values)
-      .map(val => `"${serializeValue(val)}"`)
-      .join(',')}
-  );`;
+  db.update('Admin', 30, { login: 'nowy_login' })
+    .then(row => {
+      console.log('list', { row }); // no return in any case
+    })
+    .catch(error => {
+      console.log({ error });
+    });
 
-  db.run(
-    insert('Admin', {
-      login: 'admin3',
-      mail: 'admin2@example.com',
-      name: 'Janusz',
-      gender: true,
-      registerDate: new Date(),
-      password: 'test',
-    }),
-    err => {
-      console.log(err);
-    },
-  );
-
-  const remove = (model, id) => `
-  DELETE FROM ${model} where id=${id} ;
-`;
-
-  db.run(remove('Admin', 1), (err, row) => {
-    console.log(err, row);
-  });
-
-  const details = (model, id) => `
-  SELECT * FROM ${model} WHERE id=${id};
-`;
-
-  const list = model => `
-  SELECT * FROM ${model}
-`;
-
-  console.log(details('Admin', 1));
-
-  db.get(details('Admin', 2), (error, row) => {
-    console.log(error, row);
-  });
-  db.each(list('Admin', 2), (error, row) => {
-    console.log(error, row);
-  });
-
-  const update = (model, id, values) => `UPDATE "${model}"
-  SET ${Object.entries(values)
-    .map(([key, val]) => `"${key}" = "${serializeValue(val)}"`)
-    .join(',')}
-  WHERE id=${id};
-`;
-
-  console.log(update('Admin', 1, { login: 'test' }));
-
-  db.run(update('Admin', 2, { login: 'test' }), (err, row) => {
-    console.log(err, row);
-  });
+  db.list('Admin')
+    .then(row => {
+      console.log('list', { row });
+    })
+    .catch(error => {
+      console.log({ error });
+    });
 });
 
 db.close();
