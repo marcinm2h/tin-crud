@@ -1,8 +1,10 @@
 const { Group } = require('../models/Group');
-const { GroupRepository } = require('../repositories/memory/Group');
-const { PostRepository } = require('../repositories/memory/Post');
-const { UserRepository } = require('../repositories/memory/User');
-const { CommentRepository } = require('../repositories/memory/Comment');
+const { GroupRepository } = require('../services/repositories/memory/Group');
+const { PostRepository } = require('../services/repositories/memory/Post');
+const { UserRepository } = require('../services/repositories/memory/User');
+const {
+  CommentRepository,
+} = require('../services/repositories/memory/Comment');
 const {
   validateSchema,
   validateLength,

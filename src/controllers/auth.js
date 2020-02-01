@@ -1,6 +1,6 @@
 const { SESSION_NAME } = require('../env');
-const { AdminRepository } = require('../repositories/memory/Admin');
-const { UserRepository } = require('../repositories/memory/User');
+const { AdminRepository } = require('../services/repositories/memory/Admin');
+const { UserRepository } = require('../services/repositories/memory/User');
 const {
   validateData,
   validateLength,

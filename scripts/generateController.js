@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const render = ({ name, namePascal, namePlural, namePascalPlural }) => `
 const { ${namePascal} } = require('../models/${namePascal}');
-const { ${namePascal}Repository } = require('../repositories/memory/${namePascal}');
+const { ${namePascal}Repository } = require('../services/repositories/memory/${namePascal}');
 
 const list = (req, res) => {
   const ${name}Repository = new ${namePascal}Repository();

@@ -19,7 +19,7 @@ const namePascal = (() => {
 })(); // Admin
 const namePlural = `${name}s`; // admins
 const namePascalPlural = `${namePascal}s`; // Admins
-const path = `./src/repositories/memory/${namePascal}.js`;
+const path = `./src/services/repositories/memory/${namePascal}.js`;
 
 console.log(`Generating ${path}`);
 

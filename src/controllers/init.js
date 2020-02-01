@@ -1,4 +1,4 @@
-const { GroupRepository } = require('../repositories/memory/Group');
+const { GroupRepository } = require('../services/repositories/memory/Group');
 
 const init = (req, res) => {
   const groupRepository = new GroupRepository();

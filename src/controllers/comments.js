@@ -1,5 +1,7 @@
 const { Comment } = require('../models/Comment');
-const { CommentRepository } = require('../repositories/memory/Comment');
+const {
+  CommentRepository,
+} = require('../services/repositories/memory/Comment');
 
 const list = (req, res) => {
   const commentRepository = new CommentRepository();

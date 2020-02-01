@@ -1,5 +1,5 @@
-const { PostRepository } = require('../repositories/memory/Post');
-const { GroupRepository } = require('../repositories/memory/Group');
+const { PostRepository } = require('../services/repositories/memory/Post');
+const { GroupRepository } = require('../services/repositories/memory/Group');
 
 const posts = (req, res) => {
   const postRepository = new PostRepository();

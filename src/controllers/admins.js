@@ -1,5 +1,5 @@
 const { Admin } = require('../models/Admin');
-const { AdminRepository } = require('../repositories/memory/Admin');
+const { AdminRepository } = require('../services/repositories/memory/Admin');
 
 const list = (req, res) => {
   const adminRepository = new AdminRepository();

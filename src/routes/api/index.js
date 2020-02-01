@@ -10,7 +10,7 @@ const { posts } = require('./posts');
 const { users } = require('./users');
 
 if (__DEV__) {
-  require('../../repositories/memory/mock').initData();
+  require('../../services/repositories/memory/mock').initData();
 }
 
 const router = Router();
