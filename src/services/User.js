@@ -14,6 +14,7 @@ const errors = {
 class UserService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
     this.deps = deps;
+    this.autoClose = autoClose;
   }
 
   login({ login, password }) {

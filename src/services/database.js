@@ -63,9 +63,10 @@ SELECT * FROM ${parseModelName(model)} WHERE id=${id};
 `;
 
 const find = (model, field) => `
-SELECT * FROM ${parseModelName(model)} WHERE ${Object.keys(field)[0]} = "${
-  Object.values(field)[0]
-}";
+SELECT * FROM ${parseModelName(model)} WHERE
+${Object.entries(field)
+  .map(([key, value]) => `${key} = "${value}"`)
+  .join(' AND ')};
 `;
 
 class DbService {
