@@ -2,7 +2,6 @@ const { __DEV__ } = require('../../env');
 const { Router } = require('express');
 const { auth } = require('./auth');
 const { admins } = require('./admins');
-const { comments } = require('./comments');
 const { groups } = require('./groups');
 const { home } = require('./home');
 const { init } = require('./init');
@@ -17,7 +16,6 @@ const router = Router();
 
 router.use(auth);
 router.use(admins);
-router.use(comments);
 router.use(groups);
 router.use(home);
 router.use(init);
