@@ -40,10 +40,9 @@ const details = (req, res, next) => {
   // });
 
   const postService = new PostService();
-  const id = req.params.id;
 
   postService
-    .details(id)
+    .details(req.params.id)
     .then(post => {
       res.json({
         data: { post },

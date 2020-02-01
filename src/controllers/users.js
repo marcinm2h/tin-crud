@@ -25,10 +25,9 @@ const list = (req, res, next) => {
 // FIXME: posts, groups
 const details = (req, res, next) => {
   const userService = new UserService();
-  const id = req.params.id;
 
   userService
-    .details(id)
+    .details(req.params.id)
     .then(user => {
       res.json({
         data: user,

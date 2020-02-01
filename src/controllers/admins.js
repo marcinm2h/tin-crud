@@ -14,10 +14,9 @@ const list = (req, res, next) => {
 
 const details = (req, res, next) => {
   const adminService = new AdminService();
-  const id = req.params.id;
 
   adminService
-    .details(id)
+    .details(req.params.id)
     .then(admin => {
       res.json({
         data: admin,

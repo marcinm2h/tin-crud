@@ -31,7 +31,7 @@ const mapModel = modelName =>
 const parseModelName = model =>
   mapModel(typeof model === 'string' ? model : model.name);
 
-const insert = (model, values) => `INSERT INTO "${parseModelName(model)}" (
+const insert = (model, values) => `INSERT INTO ""${parseModelName(model)}"" (
   ${Object.keys(values)
     .map(key => `"${key}"`)
     .join(',')}
@@ -51,19 +51,19 @@ WHERE id=${id};
 `;
 
 const remove = (model, id) => `
-DELETE FROM ${parseModelName(model)} where id=${id} ;
+DELETE FROM "${parseModelName(model)}" where id=${id} ;
 `;
 
 const list = model => `
-SELECT * FROM ${parseModelName(model)}
+SELECT * FROM "${parseModelName(model)}"
 `;
 
 const details = (model, id) => `
-SELECT * FROM ${parseModelName(model)} WHERE id=${id};
+SELECT * FROM "${parseModelName(model)}" WHERE id=${id};
 `;
 
 const find = (model, field) => `
-SELECT * FROM ${parseModelName(model)} WHERE
+SELECT * FROM "${parseModelName(model)}" WHERE
 ${Object.entries(field)
   .map(([key, value]) => `${key} = "${value}"`)
   .join(' AND ')};

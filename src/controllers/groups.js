@@ -1,3 +1,4 @@
+const { GroupService } = require('../services/Group');
 const { Group } = require('../models/Group');
 const { GroupRepository } = require('../services/repositories/memory/Group');
 const { PostRepository } = require('../services/repositories/memory/Post');
@@ -12,63 +13,73 @@ const {
   validateStringOrNumber,
 } = require('../validators');
 
-const list = (req, res) => {
-  const groupRepository = new GroupRepository();
-  const groups = groupRepository.list();
-  groupRepository.save();
-
-  return res.json({
-    data: {
-      groups,
-    },
-  });
+const list = (req, res, next) => {
+  const groupService = new GroupService();
+  groupService
+    .list()
+    .then(groups => {
+      res.json({
+        data: {
+          groups,
+        },
+      });
+    })
+    .catch(next);
 };
 
-const details = (req, res) => {
-  const id = parseInt(req.params.id);
-  const groupRepository = new GroupRepository();
-  const group = groupRepository.find(id);
+const details = (req, res, next) => {
+  // const id = parseInt(req.params.id);
+  // const groupRepository = new GroupRepository();
+  // const group = groupRepository.find(id);
 
-  const postRepository = new PostRepository();
-  group.posts = group.posts.map(id => postRepository.find(id));
+  // const postRepository = new PostRepository();
+  // group.posts = group.posts.map(id => postRepository.find(id));
 
-  const userRepository = new UserRepository();
-  group.users = group.users.map(id => userRepository.find(id));
+  // const userRepository = new UserRepository();
+  // group.users = group.users.map(id => userRepository.find(id));
+  const groupService = new GroupService();
 
-  return res.json({
-    data: {
-      group,
-    },
-  });
+  groupService
+    .details(req.params.id)
+    .then(post => {
+      res.json({
+        data: {
+          post,
+        },
+      });
+    })
+    .catch(next);
 };
 
-const add = (req, res) => {
+const add = (req, res, next) => {
   const { errors, data } = validateSchema(add.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
 
-  const groupRepository = new GroupRepository();
-  const userRepository = new UserRepository();
-  const user = userRepository.find(req.session.userId);
-  const group = new Group(data);
+  // const groupRepository = new GroupRepository();
+  // const userRepository = new UserRepository();
+  // const user = userRepository.find(req.session.userId);
+  // const group = new Group(data);
 
-  group.owner = user.id;
-  group.users.push(user.id);
+  // group.owner = user.id;
+  // group.users.push(user.id);
 
-  user.groupsIn.push(group.id);
-  user.groupsCreated.push(group.id);
+  // user.groupsIn.push(group.id);
+  // user.groupsCreated.push(group.id);
 
-  groupRepository.add(group);
-
-  groupRepository.save();
-  userRepository.save();
-
-  return res.json({
-    data: {
-      group,
-    },
-  });
+  // groupRepository.add(group);
+  const groupService = new GroupService();
+  groupService
+    .add(data)
+    .then(group => {
+      res.json({
+        data: {
+          group,
+        },
+      });
+    })
+    .catch(next);
 };
 
 add.schema = {
@@ -94,22 +105,23 @@ add.schema = {
   },
 };
 
-const edit = (req, res) => {
+const edit = (req, res, next) => {
   const { errors, data } = validateSchema(edit.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
 
-  const groupRepository = new GroupRepository();
-  const id = parseInt(req.params.id);
-  const group = groupRepository.edit(id, data);
-  groupRepository.save();
-
-  return res.json({
-    data: {
-      group,
-    },
-  });
+  const groupService = new GroupService();
+  groupService
+    .edit(req.params.id, data)
+    .then(group => {
+      res.json({
+        data: {
+          group,
+        },
+      });
+    })
+    .catch(next);
 };
 
 edit.schema = {
@@ -135,52 +147,49 @@ edit.schema = {
   },
 };
 
-const remove = (req, res) => {
-  const id = parseInt(req.params.id);
-  const groupRepository = new GroupRepository();
-  const userRepository = new UserRepository();
-  const postRepository = new PostRepository();
-  const commentRepository = new CommentRepository();
-  const group = groupRepository.find(id);
+const remove = (req, res, next) => {
+  // group.users.forEach(userId => {
+  //   const user = userRepository.find(userId);
+  //   user.groupsIn = user.groupsIn.filter(groupId => groupId !== group.id);
+  // });
 
-  group.users.forEach(userId => {
-    const user = userRepository.find(userId);
-    user.groupsIn = user.groupsIn.filter(groupId => groupId !== group.id);
-  });
+  // const owner = userRepository.find(group.owner);
+  // userRepository.edit(owner.id, {
+  //   groupsCreated: owner.groupsCreated.filter(groupId => groupId !== group.id),
+  // });
 
-  const owner = userRepository.find(group.owner);
-  userRepository.edit(owner.id, {
-    groupsCreated: owner.groupsCreated.filter(groupId => groupId !== group.id),
-  });
+  // groupRepository.remove(id);
 
-  groupRepository.remove(id);
-
-  group.posts.forEach(id => {
-    const post = postRepository.find(id);
-    const author = userRepository.find(post.author);
-    userRepository.edit(author.id, {
-      posts: author.posts.filter(id => id !== post.id),
-    });
-    post.comments.forEach(commentId => {
-      const comment = commentRepository.find(commentId);
-      const author = commentRepository.find(comment.author);
-      userRepository.edit(author.id, {
-        comments: author.comments.filter(commentId => comment.id),
-      });
-      commentRepository.remove(comment.id);
-    });
-    postRepository.remove(post.id);
-  });
+  // group.posts.forEach(id => {
+  //   const post = postRepository.find(id);
+  //   const author = userRepository.find(post.author);
+  //   userRepository.edit(author.id, {
+  //     posts: author.posts.filter(id => id !== post.id),
+  //   });
+  //   post.comments.forEach(commentId => {
+  //     const comment = commentRepository.find(commentId);
+  //     const author = commentRepository.find(comment.author);
+  //     userRepository.edit(author.id, {
+  //       comments: author.comments.filter(commentId => comment.id),
+  //     });
+  //     commentRepository.remove(comment.id);
+  //   });
+  //   postRepository.remove(post.id);
+  // });
 
   // TODO: remove posts comments, remove posts comments owners
 
-  postRepository.save();
-  userRepository.save();
-  groupRepository.save();
-
-  return res.json({
-    data: {},
-  });
+  const groupService = new GroupService();
+  groupService
+    .remove(req.params.id)
+    .then(group => {
+      res.json({
+        data: {
+          group,
+        },
+      });
+    })
+    .catch(next);
 };
 
 const join = (req, res) => {
