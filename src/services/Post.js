@@ -101,6 +101,23 @@ class PostService {
       });
     });
   }
+
+  find(...args) {
+    const { DbService } = this.deps;
+    const db = new DbService();
+
+    return new Promise((resolve, reject) => {
+      db.serialize(async () => {
+        const item = await db.find(Post, ...args).catch(reject);
+
+        if (this.autoClose) {
+          db.close();
+        }
+
+        resolve(item);
+      });
+    });
+  }
 }
 
 module.exports = {

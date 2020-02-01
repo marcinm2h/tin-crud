@@ -65,7 +65,11 @@ SELECT * FROM "${parseModelName(model)}" WHERE id=${id};
 const find = (model, field) => `
 SELECT * FROM "${parseModelName(model)}" WHERE
 ${Object.entries(field)
-  .map(([key, value]) => `${key} = "${value}"`)
+  .map(([key, value]) =>
+    Array.isArray(value)
+      ? `"${key}" IN (${value.map(value => `"${value}"`).join(', ')})`
+      : `"${key}" = "${value}"`,
+  )
   .join(' AND ')};
 `;
 
@@ -163,7 +167,7 @@ class DbService {
       console.log(query);
     }
     return new Promise((resolve, reject) => {
-      this.__instance.get(query, (err, result) => {
+      this.__instance.all(query, (err, result) => {
         if (err) {
           return reject(err);
         }

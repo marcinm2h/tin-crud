@@ -1,11 +1,6 @@
 const { GroupService } = require('../services/Group');
-const { Group } = require('../models/Group');
 const { GroupRepository } = require('../services/repositories/memory/Group');
-const { PostRepository } = require('../services/repositories/memory/Post');
 const { UserRepository } = require('../services/repositories/memory/User');
-const {
-  CommentRepository,
-} = require('../services/repositories/memory/Comment');
 const {
   validateSchema,
   validateLength,
@@ -27,28 +22,23 @@ const list = (req, res, next) => {
     .catch(next);
 };
 
-const details = (req, res, next) => {
-  // const id = parseInt(req.params.id);
-  // const groupRepository = new GroupRepository();
-  // const group = groupRepository.find(id);
+const details = async (req, res, next) => {
+  try {
+    const groupService = new GroupService();
+    let group = await groupService.details(req.params.id);
+    const groupUsers = await groupService.users(group.id);
+    const groupPosts = await groupService.posts(group.id);
+    group.users = groupUsers;
+    group.posts = groupPosts;
 
-  // const postRepository = new PostRepository();
-  // group.posts = group.posts.map(id => postRepository.find(id));
-
-  // const userRepository = new UserRepository();
-  // group.users = group.users.map(id => userRepository.find(id));
-  const groupService = new GroupService();
-
-  groupService
-    .details(req.params.id)
-    .then(post => {
-      res.json({
-        data: {
-          post,
-        },
-      });
-    })
-    .catch(next);
+    res.json({
+      data: {
+        group,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 const add = (req, res, next) => {

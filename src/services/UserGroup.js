@@ -30,7 +30,7 @@ class UserGroupService {
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
         const item = await db
-          .find(TABLE_NAME, { loggedId, groupId })
+          .find(TABLE_NAME, loggedId ? { loggedId } : { groupId })
           .catch(reject);
 
         if (this.autoClose) {

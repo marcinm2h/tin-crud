@@ -1,8 +1,14 @@
 const { Group } = require('../models/Group');
 const { DbService } = require('./Database');
+const { UserGroupService } = require('./UserGroup');
+const { UserService } = require('./User');
+const { PostService } = require('./Post');
 
 class GroupService {
-  constructor({ deps = { DbService }, autoClose = true } = {}) {
+  constructor({
+    deps = { DbService, UserGroupService, PostService },
+    autoClose = true,
+  } = {}) {
     this.deps = deps;
     this.autoClose = autoClose;
   }
@@ -100,6 +106,25 @@ class GroupService {
         resolve();
       });
     });
+  }
+
+  async users(id) {
+    const { UserGroupService } = this.deps;
+    const userGroupService = new UserGroupService();
+    const userGroup = await userGroupService.find({ groupId: id });
+    const userIds = userGroup.map(({ loggedId }) => loggedId);
+    const userService = new UserService();
+    const users = await userService.find({ id: userIds });
+
+    return users;
+  }
+
+  async posts(id) {
+    const { PostService } = this.deps;
+    const postService = new PostService();
+    const posts = await postService.find({ group: id });
+
+    return posts;
   }
 }
 
