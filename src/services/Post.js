@@ -1,37 +1,10 @@
-const { Admin } = require('../models/Admin');
+const { Post } = require('../models/Post');
 const { DbService } = require('./Database');
 
-class DataNotFoundError extends Error {}
-
-class AuthError extends Error {}
-
-const errors = {
-  ADMIN_NOT_EXIST: login => `Nie znaleziono administratora ${login}.`,
-  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
-};
-
-class AdminService {
+class PostService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
     this.deps = deps;
     this.autoClose = autoClose;
-  }
-
-  login({ login, password }) {
-    const { DbService } = this.deps;
-    const db = new DbService();
-
-    return new Promise((resolve, reject) => {
-      db.find(Admin, { login })
-        .then(a => {
-          if (a.password !== password) {
-            reject(new AuthError(errors.INVALID_PASSWORD()));
-          }
-          resolve(new Admin(a));
-        })
-        .catch(() => {
-          reject(new DataNotFoundError(errors.ADMIN_NOT_EXIST(login)));
-        });
-    });
   }
 
   list() {
@@ -40,14 +13,14 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const admins = await db
-          .list(Admin)
-          .then(data => data.map(a => new Admin(a)))
+        const posts = await db
+          .list(Post)
+          .then(data => data.map(p => new Post(p)))
           .catch(reject);
         if (this.autoClose) {
           db.close();
         }
-        resolve(admins);
+        resolve(posts);
       });
     });
   }
@@ -58,16 +31,16 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const admin = await db
-          .details(Admin, id)
-          .then(a => a && new Admin(a))
+        const post = await db
+          .details(Post, id)
+          .then(p => p && new Post(p))
           .catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(admin);
+        resolve(post);
       });
     });
   }
@@ -78,16 +51,16 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const admin = await db
-          .add(Admin, values)
-          .then(a => a && new Admin(a))
+        const post = await db
+          .add(Post, values)
+          .then(p => p && new Post(p))
           .catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(admin);
+        resolve(post);
       });
     });
   }
@@ -98,16 +71,16 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const admin = await db
-          .edit(Admin, id, values)
-          .then(a => a && new Admin(a))
+        const post = await db
+          .edit(Post, id, values)
+          .then(p => p && new Post(p))
           .catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(admin);
+        resolve(post);
       });
     });
   }
@@ -118,7 +91,7 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        await db.remove(Admin, id).catch(reject);
+        await db.remove(Post, id).catch(reject);
 
         if (this.autoClose) {
           db.close();
@@ -131,5 +104,5 @@ class AdminService {
 }
 
 module.exports = {
-  AdminService,
+  PostService,
 };

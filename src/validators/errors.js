@@ -19,7 +19,7 @@ const errors = {
   STRING: () => 'Pole może zawierać wyłącznie litery.',
   STRING_OR_NUMBER: () => 'Pole może zawierać wyłącznie litery i cyfry.',
   URL: () => 'Niepoprawny url. Wprowadź poprawny adres url.',
-  INVALID_VOTE: () => 'Nie można oddawać więcej niż jeden głos na post.',
+  INVALID_VOTE: () => 'Błędny głos.',
 };
 
 module.exports = {

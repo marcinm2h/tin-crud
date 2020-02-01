@@ -1,10 +1,4 @@
-const { Post } = require('../models/Post');
-const { PostRepository } = require('../services/repositories/memory/Post');
-const { GroupRepository } = require('../services/repositories/memory/Group');
-const { UserRepository } = require('../services/repositories/memory/User');
-const {
-  CommentRepository,
-} = require('../services/repositories/memory/Comment');
+const { PostService } = require('../services/Post');
 const {
   errors,
   validateSchema,
@@ -12,40 +6,53 @@ const {
   validateNumber,
   validateUrl,
 } = require('../validators');
-const { INVALID_VOTE } = errors;
 
-const list = (req, res) => {
-  const postRepository = new PostRepository();
-  const posts = postRepository.list();
-  postRepository.save();
-
-  return res.json({
-    data: posts,
-  });
+const list = (req, res, next) => {
+  const postService = new PostService();
+  postService
+    .list()
+    .then(posts => {
+      res.json({
+        data: posts,
+      });
+    })
+    .catch(next);
 };
 
-const details = (req, res) => {
-  const id = parseInt(req.params.id);
-  const postRepository = new PostRepository();
-  const groupRepository = new GroupRepository();
-  const userRepository = new UserRepository();
-  const commentRepository = new CommentRepository();
+const details = (req, res, next) => {
+  // const id = parseInt(req.params.id);
+  // const postRepository = new PostRepository();
+  // const groupRepository = new GroupRepository();
+  // const userRepository = new UserRepository();
+  // const commentRepository = new CommentRepository();
 
-  const post = postRepository.find(id);
-  post.group = groupRepository.find(post.group);
-  post.author = userRepository.find(post.author);
-  post.comments = post.comments.map(postId => commentRepository.find(postId));
-  post.comments = post.comments.map(comment => {
-    comment.author = userRepository.find(comment.author).login;
-    return comment;
-  });
+  // const post = postRepository.find(id);
+  // post.group = groupRepository.find(post.group);
+  // post.author = userRepository.find(post.author);
+  // post.comments = post.comments.map(postId => commentRepository.find(postId));
+  // post.comments = post.comments.map(comment => {
+  //   comment.author = userRepository.find(comment.author).login;
+  //   return comment;
+  // });
 
-  return res.json({
-    data: { post },
-  });
+  // return res.json({
+  //   data: { post },
+  // });
+
+  const postService = new PostService();
+  const id = req.params.id;
+
+  postService
+    .details(id)
+    .then(post => {
+      res.json({
+        data: { post },
+      });
+    })
+    .catch(next);
 };
 
-const add = (req, res) => {
+const add = (req, res, next) => {
   const {
     errors,
     data: { groupId, ...data },
@@ -54,34 +61,46 @@ const add = (req, res) => {
     return res.json({ errors });
   }
 
-  const postRepository = new PostRepository();
-  const userRepository = new UserRepository();
-  const groupRepository = new GroupRepository();
+  // const postRepository = new PostRepository();
+  // const userRepository = new UserRepository();
+  // const groupRepository = new GroupRepository();
 
-  const user = userRepository.find(req.session.userId);
-  const group = groupRepository.find(parseInt(groupId));
-  const post = new Post(data);
-  if (!post.url.includes('//')) {
-    post.url = `//${[post.url]}`;
-  }
+  // const user = userRepository.find(req.session.userId);
+  // const group = groupRepository.find(parseInt(groupId));
+  // const post = new Post(data);
+  // if (!post.url.includes('//')) {
+  //   post.url = `//${[post.url]}`;
+  // }
 
-  post.author = user.id;
-  user.posts.push(post.id);
+  // post.author = user.id;
+  // user.posts.push(post.id);
 
-  post.group = group.id;
-  group.posts.push(post.id);
+  // post.group = group.id;
+  // group.posts.push(post.id);
 
-  postRepository.add(post);
+  // postRepository.add(post);
 
-  userRepository.save();
-  groupRepository.save();
-  postRepository.save();
+  // userRepository.save();
+  // groupRepository.save();
+  // postRepository.save();
 
-  return res.json({
-    data: {
-      post,
-    },
-  });
+  // return res.json({
+  //   data: {
+  //     post,
+  //   },
+  // });
+
+  const postService = new PostService();
+  postService
+    .add(data)
+    .then(post => {
+      res.json({
+        data: {
+          post,
+        },
+      });
+    })
+    .catch(next);
 };
 
 add.schema = {
@@ -104,21 +123,23 @@ add.schema = {
   },
 };
 
-const edit = (req, res) => {
+const edit = (req, res, next) => {
   const { errors, data } = validateSchema(edit.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
 
-  const id = parseInt(req.params.id);
-  const postRepository = new PostRepository();
-  postRepository.edit(id, data);
-
-  postRepository.save();
-
-  return res.json({
-    data: {},
-  });
+  const postService = new PostService();
+  postService
+    .edit(req.params.id, data)
+    .then(post => {
+      res.json({
+        data: {
+          post,
+        },
+      });
+    })
+    .catch(next);
 };
 
 edit.schema = {
@@ -137,98 +158,80 @@ edit.schema = {
   },
 };
 
-const remove = (req, res) => {
-  const id = parseInt(req.params.id);
-  const postRepository = new PostRepository();
-  const userRepository = new UserRepository();
-  const groupRepository = new GroupRepository();
-  const commentRepository = new CommentRepository();
+const remove = (req, res, next) => {
+  // const id = parseInt(req.params.id);
+  // const postRepository = new PostRepository();
+  // const userRepository = new UserRepository();
+  // const groupRepository = new GroupRepository();
+  // const commentRepository = new CommentRepository();
 
-  const post = postRepository.find(id);
-  const user = userRepository.find(post.author);
-  const group = groupRepository.find(post.group);
+  // const post = postRepository.find(id);
+  // const user = userRepository.find(post.author);
+  // const group = groupRepository.find(post.group);
 
-  userRepository.edit(user.id, {
-    posts: user.posts.filter(postId => postId !== post.id),
-  });
-  groupRepository.edit(group.id, {
-    posts: group.posts.filter(postId => postId !== post.id),
-  });
+  // userRepository.edit(user.id, {
+  //   posts: user.posts.filter(postId => postId !== post.id),
+  // });
+  // groupRepository.edit(group.id, {
+  //   posts: group.posts.filter(postId => postId !== post.id),
+  // });
 
-  post.comments.forEach(commentId => {
-    commentRepository.remove(commentId);
-  });
+  // post.comments.forEach(commentId => {
+  //   commentRepository.remove(commentId);
+  // });
 
-  postRepository.remove(id);
+  // postRepository.remove(id);
 
-  commentRepository.save();
-  userRepository.save();
-  groupRepository.save();
-  postRepository.save();
+  // commentRepository.save();
+  // userRepository.save();
+  // groupRepository.save();
+  // postRepository.save();
 
-  return res.json({
-    data: {},
-  });
+  // return res.json({
+  //   data: {},
+  // });
+
+  const postService = new PostService();
+  postService
+    .remove(req.params.id)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 };
 
-const vote = (req, res) => {
+const vote = (req, res, next) => {
   const { errors, data } = validateSchema(vote.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
 
-  const postId = parseInt(req.params.id);
-  const { type } = data;
+  const postService = new PostService();
+  postService
+    .details(req.params.id)
+    .then(post => {
+      const postService = new PostService();
+      const votesAgainst =
+        data.type === 'against' ? post.votesAgainst + 1 : post.votesAgainst;
+      const votesFor = data.type === 'for' ? post.votesFor + 1 : post.votesFor;
 
-  const postRepository = new PostRepository();
-  const userRepository = new UserRepository();
-
-  const user = userRepository.find(req.session.userId);
-  let post = postRepository.find(postId);
-
-  if (post.usersVotedAgainst.includes(user.id) && type === 'against') {
-    throw new Error(INVALID_VOTE());
-  }
-
-  if (post.usersVotedFor.includes(user.id) && type === 'for') {
-    throw new Error(INVALID_VOTE());
-  }
-
-  if (type === 'against') {
-    post = {
-      ...post,
-      votesAgainst: post.votesAgainst + 1,
-      votesFor: post.usersVotedFor.includes(user.id)
-        ? post.votesFor - 1
-        : post.votesFor,
-      usersVotedAgainst: post.usersVotedAgainst.concat(user.id),
-      usersVotedFor: post.usersVotedFor.filter(userId => userId !== user.id),
-    };
-  }
-
-  if (type === 'for') {
-    post = {
-      ...post,
-      votesFor: post.votesFor + 1,
-      votesAgainst: post.usersVotedAgainst.includes(user.id)
-        ? post.votesAgainst - 1
-        : post.votesAgainst,
-      usersVotedFor: post.usersVotedFor.concat(user.id),
-      usersVotedAgainst: post.usersVotedAgainst.filter(
-        userId => userId !== user.id,
-      ),
-    };
-  }
-
-  postRepository.edit(post.id, post);
-
-  postRepository.save();
-
-  return res.json({
-    data: {
-      post,
-    },
-  });
+      postService
+        .edit(req.params.id, {
+          votesAgainst,
+          votesFor,
+        })
+        .then(post => {
+          res.json({
+            data: {
+              post,
+            },
+          });
+        })
+        .catch(next);
+    })
+    .catch(next);
 };
 
 vote.schema = {

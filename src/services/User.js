@@ -120,13 +120,13 @@ class UserService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const user = await db.remove(User, id).catch(reject);
+        await db.remove(User, id).catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(user);
+        resolve();
       });
     });
   }
