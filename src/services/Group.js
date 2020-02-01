@@ -154,6 +154,24 @@ class GroupService {
 
     return posts;
   }
+
+  join(id, userId) {
+    const { UserGroupService } = this.deps;
+    const userGroupService = new UserGroupService();
+
+    return userGroupService.add({ userId, groupId: id });
+  }
+
+  async leave(id, userId) {
+    const { UserGroupService } = this.deps;
+    const userGroupService = new UserGroupService();
+    const userGroups = await userGroupService.find({ userId, groupId: id });
+
+    for (let userGroup of userGroups) {
+      const userGroupService = new UserGroupService();
+      await userGroupService.remove(userGroup.id);
+    }
+  }
 }
 
 module.exports = {

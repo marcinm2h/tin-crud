@@ -1,6 +1,4 @@
 const { GroupService } = require('../services/Group');
-const { GroupRepository } = require('../services/repositories/memory/Group');
-const { UserRepository } = require('../services/repositories/memory/User');
 const {
   validateSchema,
   validateLength,
@@ -144,42 +142,28 @@ const remove = (req, res, next) => {
     .catch(next);
 };
 
-const join = (req, res) => {
-  const id = parseInt(req.params.id);
-  const groupRepository = new GroupRepository();
-  const userRepository = new UserRepository();
-  const group = groupRepository.find(id);
-  const user = userRepository.find(req.session.userId);
-
-  if (!group.users.contains(user.id)) {
-    group.users.push(user.id);
-    user.groupsIn.push(group.id);
-
-    userRepository.save();
-    groupRepository.save();
-  }
-
-  return res.json({
-    data: {},
-  });
+const join = (req, res, next) => {
+  const groupService = new GroupService();
+  groupService
+    .join(req.params.id, req.session.userId)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 };
 
-const leave = (req, res) => {
-  const id = parseInt(req.params.id);
-  const groupRepository = new GroupRepository();
-  const userRepository = new UserRepository();
-  const group = groupRepository.find(id);
-  const user = userRepository.find(req.session.userId);
-
-  group.users.filter(userId => userId !== user.id);
-  user.groupsIn.filter(groupId => groupId !== group.id);
-
-  userRepository.save();
-  groupRepository.save();
-
-  return res.json({
-    data: {},
-  });
+const leave = (req, res, next) => {
+  const groupService = new GroupService();
+  groupService
+    .leave(req.params.id, req.session.userId)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 };
 
 module.exports = { list, details, add, edit, remove, join, leave };
