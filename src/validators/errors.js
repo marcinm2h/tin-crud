@@ -20,6 +20,10 @@ const errors = {
   STRING_OR_NUMBER: () => 'Pole może zawierać wyłącznie litery i cyfry.',
   URL: () => 'Niepoprawny url. Wprowadź poprawny adres url.',
   INVALID_VOTE: () => 'Błędny głos.',
+  DATA_NOT_FOUND: () => 'Nie znaleziono danych.',
+  ADMIN_NOT_EXIST: login => `Nie znaleziono administratora ${login}.`,
+  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
+  USER_NOT_EXIST: login => `Nie znaleziono użytkownika ${login}.`,
 };
 
 module.exports = {

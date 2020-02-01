@@ -1,14 +1,6 @@
 const { Admin } = require('../models/Admin');
 const { DbService } = require('./Database');
-
-class DataNotFoundError extends Error {}
-
-class AuthError extends Error {}
-
-const errors = {
-  ADMIN_NOT_EXIST: login => `Nie znaleziono administratora ${login}.`,
-  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
-};
+const { errors } = require('../validators/errors');
 
 class AdminService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
@@ -21,15 +13,15 @@ class AdminService {
     const db = new DbService();
 
     return new Promise((resolve, reject) => {
-      db.find(Admin, { login })
+      db.findOne(Admin, { login })
         .then(a => {
           if (a.password !== password) {
-            reject(new AuthError(errors.INVALID_PASSWORD()));
+            reject(new Error(errors.INVALID_PASSWORD()));
           }
           resolve(new Admin(a));
         })
         .catch(() => {
-          reject(new DataNotFoundError(errors.ADMIN_NOT_EXIST(login)));
+          reject(new Error(errors.ADMIN_NOT_EXIST(login)));
         });
     });
   }
@@ -60,7 +52,12 @@ class AdminService {
       db.serialize(async () => {
         const admin = await db
           .details(Admin, id)
-          .then(a => a && new Admin(a))
+          .then(a => {
+            if (!a) {
+              throw new Error(errors.DATA_NOT_FOUND());
+            }
+            return new Admin(a);
+          })
           .catch(reject);
 
         if (this.autoClose) {
@@ -78,16 +75,13 @@ class AdminService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const admin = await db
-          .add(Admin, values)
-          .then(a => a && new Admin(a))
-          .catch(reject);
+        const lastId = await db.add(Admin, values).catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(admin);
+        resolve(lastId);
       });
     });
   }

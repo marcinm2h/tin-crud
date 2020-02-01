@@ -3,10 +3,11 @@ const { DbService } = require('./Database');
 const { UserGroupService } = require('./UserGroup');
 const { UserService } = require('./User');
 const { PostService } = require('./Post');
+const { errors } = require('../validators/errors');
 
 class GroupService {
   constructor({
-    deps = { DbService, UserGroupService, PostService },
+    deps = { DbService, UserGroupService, PostService, UserService },
     autoClose = true,
   } = {}) {
     this.deps = deps;
@@ -39,7 +40,12 @@ class GroupService {
       db.serialize(async () => {
         const group = await db
           .details(Group, id)
-          .then(g => g && new Group(g))
+          .then(g => {
+            if (!g) {
+              throw new Error(errors.DATA_NOT_FOUND());
+            }
+            return new Group(g);
+          })
           .catch(reject);
 
         if (this.autoClose) {
@@ -51,24 +57,28 @@ class GroupService {
     });
   }
 
-  add(values) {
+  async add(values) {
     const { DbService } = this.deps;
     const db = new DbService();
 
-    return new Promise((resolve, reject) => {
+    const groupId = await new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const group = await db
-          .add(Group, values)
-          .then(g => g && new Group(g))
-          .catch(reject);
+        const groupId = await db.add(Group, values).catch(e => {
+          throw new Error(e);
+        });
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(group);
+        resolve(groupId);
       });
     });
+    const { UserGroupService } = this.deps;
+    const userGroupService = new UserGroupService();
+    await userGroupService.add({ groupId, userId: values.owner });
+
+    return groupId;
   }
 
   edit(id, values) {
@@ -91,7 +101,25 @@ class GroupService {
     });
   }
 
-  remove(id) {
+  async remove(id) {
+    const { PostService, UserGroupService } = this.deps;
+    const users = await this.users(id);
+    const userId = users.map(({ id }) => id);
+    const userGroupService = new UserGroupService();
+    const userGroups = await userGroupService.find({ userId, groupId: id });
+
+    for (let userGroup of userGroups) {
+      const userGroupService = new UserGroupService();
+      await userGroupService.remove(userGroup.id);
+    }
+
+    const postService = new PostService();
+    const posts = await postService.find({ group: id });
+
+    for (let post of posts) {
+      await postService.remove(post.id);
+    }
+
     const { DbService } = this.deps;
     const db = new DbService();
 
@@ -109,7 +137,7 @@ class GroupService {
   }
 
   async users(id) {
-    const { UserGroupService } = this.deps;
+    const { UserGroupService, UserService } = this.deps;
     const userGroupService = new UserGroupService();
     const userGroup = await userGroupService.find({ groupId: id });
     const userIds = userGroup.map(({ loggedId }) => loggedId);

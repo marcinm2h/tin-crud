@@ -46,26 +46,19 @@ const add = (req, res, next) => {
   if (errors) {
     return res.json({ errors });
   }
-
-  // const groupRepository = new GroupRepository();
-  // const userRepository = new UserRepository();
-  // const user = userRepository.find(req.session.userId);
-  // const group = new Group(data);
-
-  // group.owner = user.id;
-  // group.users.push(user.id);
-
-  // user.groupsIn.push(group.id);
-  // user.groupsCreated.push(group.id);
-
-  // groupRepository.add(group);
   const groupService = new GroupService();
   groupService
-    .add(data)
-    .then(group => {
+    .add(
+      {
+        ...data,
+        owner: req.session.userId,
+      },
+      req.session.userId,
+    )
+    .then(id => {
       res.json({
         data: {
-          group,
+          id,
         },
       });
     })
@@ -138,37 +131,6 @@ edit.schema = {
 };
 
 const remove = (req, res, next) => {
-  // group.users.forEach(userId => {
-  //   const user = userRepository.find(userId);
-  //   user.groupsIn = user.groupsIn.filter(groupId => groupId !== group.id);
-  // });
-
-  // const owner = userRepository.find(group.owner);
-  // userRepository.edit(owner.id, {
-  //   groupsCreated: owner.groupsCreated.filter(groupId => groupId !== group.id),
-  // });
-
-  // groupRepository.remove(id);
-
-  // group.posts.forEach(id => {
-  //   const post = postRepository.find(id);
-  //   const author = userRepository.find(post.author);
-  //   userRepository.edit(author.id, {
-  //     posts: author.posts.filter(id => id !== post.id),
-  //   });
-  //   post.comments.forEach(commentId => {
-  //     const comment = commentRepository.find(commentId);
-  //     const author = commentRepository.find(comment.author);
-  //     userRepository.edit(author.id, {
-  //       comments: author.comments.filter(commentId => comment.id),
-  //     });
-  //     commentRepository.remove(comment.id);
-  //   });
-  //   postRepository.remove(post.id);
-  // });
-
-  // TODO: remove posts comments, remove posts comments owners
-
   const groupService = new GroupService();
   groupService
     .remove(req.params.id)

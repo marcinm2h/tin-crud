@@ -1,15 +1,7 @@
 const omit = require('lodash/omit');
 const { User } = require('../models/User');
 const { DbService } = require('./Database');
-
-class DataNotFoundError extends Error {}
-
-class AuthError extends Error {}
-
-const errors = {
-  USER_NOT_EXIST: login => `Nie znaleziono użytkownika ${login}.`,
-  INVALID_PASSWORD: login => `Nieprawidłowe hasło.`,
-};
+const { errors } = require('../validators/errors');
 
 class UserService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
@@ -22,15 +14,15 @@ class UserService {
     const db = new DbService();
 
     return new Promise((resolve, reject) => {
-      db.find(User, { login })
+      db.findOne(User, { login })
         .then(a => {
           if (a.password !== password) {
-            reject(new AuthError(errors.INVALID_PASSWORD()));
+            reject(new Error(errors.INVALID_PASSWORD()));
           }
           resolve(new User(a));
         })
         .catch(() => {
-          reject(new DataNotFoundError(errors.USER_NOT_EXIST(login)));
+          reject(new Error(errors.USER_NOT_EXIST(login)));
         });
     });
   }
@@ -62,7 +54,12 @@ class UserService {
       db.serialize(async () => {
         const user = await db
           .details(User, id)
-          .then(u => u && new User(u))
+          .then(u => {
+            if (!u) {
+              throw new Error(errors.DATA_NOT_FOUND());
+            }
+            return new User(u);
+          })
           .catch(reject);
 
         if (this.autoClose) {

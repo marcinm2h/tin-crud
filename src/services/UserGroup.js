@@ -30,7 +30,14 @@ class UserGroupService {
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
         const item = await db
-          .find(TABLE_NAME, loggedId ? { loggedId } : { groupId })
+          .find(
+            TABLE_NAME,
+            Object.assign(
+              {},
+              loggedId ? { loggedId } : {},
+              groupId ? { groupId } : {},
+            ),
+          )
           .catch(reject);
 
         if (this.autoClose) {
@@ -48,13 +55,15 @@ class UserGroupService {
 
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
-        await db.add(TABLE_NAME, { loggedId, groupId }).catch(reject);
+        const userGroupId = await db
+          .add(TABLE_NAME, { loggedId, groupId })
+          .catch(reject);
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve();
+        resolve(userGroupId);
       });
     });
   }

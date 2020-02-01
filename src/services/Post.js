@@ -1,5 +1,6 @@
 const { Post } = require('../models/Post');
 const { DbService } = require('./Database');
+const { errors } = require('../validators/errors');
 
 class PostService {
   constructor({ deps = { DbService }, autoClose = true } = {}) {
@@ -33,7 +34,12 @@ class PostService {
       db.serialize(async () => {
         const post = await db
           .details(Post, id)
-          .then(p => p && new Post(p))
+          .then(p => {
+            if (!p) {
+              throw new Error(errors.DATA_NOT_FOUND());
+            }
+            return new Post(p);
+          })
           .catch(reject);
 
         if (this.autoClose) {

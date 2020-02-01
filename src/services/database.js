@@ -31,7 +31,7 @@ const mapModel = modelName =>
 const parseModelName = model =>
   mapModel(typeof model === 'string' ? model : model.name);
 
-const insert = (model, values) => `INSERT INTO ""${parseModelName(model)}"" (
+const insert = (model, values) => `INSERT INTO "${parseModelName(model)}" (
   ${Object.keys(values)
     .map(key => `"${key}"`)
     .join(',')}
@@ -92,11 +92,11 @@ class DbService {
       console.log(query);
     }
     return new Promise((resolve, reject) => {
-      this.__instance.run(query, (err, result) => {
+      this.__instance.run(query, function(err) {
         if (err) {
           return reject(err);
         }
-        return resolve(result);
+        return resolve(this.lastID);
       });
     });
   }
@@ -168,6 +168,21 @@ class DbService {
     }
     return new Promise((resolve, reject) => {
       this.__instance.all(query, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  findOne(...args) {
+    const query = find(...args);
+    if (__DEV__) {
+      console.log(query);
+    }
+    return new Promise((resolve, reject) => {
+      this.__instance.get(query, (err, result) => {
         if (err) {
           return reject(err);
         }
