@@ -1,13 +1,24 @@
 const { Admin } = require('../models/Admin');
 const { AdminRepository } = require('../services/repositories/memory/Admin');
 
-const list = (req, res) => {
-  const adminRepository = new AdminRepository();
-  const admins = adminRepository.list();
+const { DbService } = require('../services/Database');
 
-  return res.json({
-    data: admins,
+const list = (req, res) => {
+  const db = new DbService();
+  db.serialize(async () => {
+    const admins = await db.list('Admin');
+    res.json({
+      data: { admins },
+    });
   });
+
+  db.close();
+  // const adminRepository = new AdminRepository();
+  // const admins = adminRepository.list();
+
+  // return res.json({
+  //   data: admins,
+  // });
 };
 
 const details = (req, res) => {
