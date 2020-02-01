@@ -14,6 +14,24 @@ class GroupService {
     this.autoClose = autoClose;
   }
 
+  find(id) {
+    const { DbService } = this.deps;
+    const db = new DbService();
+
+    return new Promise((resolve, reject) => {
+      db.serialize(async () => {
+        const groups = await db
+          .find(Group, { id })
+          .then(data => data.map(g => new Group(g)))
+          .catch(reject);
+        if (this.autoClose) {
+          db.close();
+        }
+        resolve(groups);
+      });
+    });
+  }
+
   list() {
     const { DbService } = this.deps;
     const db = new DbService();
