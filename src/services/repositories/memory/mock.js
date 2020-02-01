@@ -1,12 +1,12 @@
-const { Admin } = require('../../models/Admin');
+const { Admin } = require('../../../models/Admin');
 const { AdminRepository } = require('./Admin');
-const { Comment } = require('../../models/Comment');
+const { Comment } = require('../../../models/Comment');
 const { CommentRepository } = require('./Comment');
-const { Group } = require('../../models/Group');
+const { Group } = require('../../../models/Group');
 const { GroupRepository } = require('./Group');
-const { Post } = require('../../models/Post');
+const { Post } = require('../../../models/Post');
 const { PostRepository } = require('./Post');
-const { User } = require('../../models/User');
+const { User } = require('../../../models/User');
 const { UserRepository } = require('./User');
 
 const randomInt = (min = 0, max) =>

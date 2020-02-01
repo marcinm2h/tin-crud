@@ -6,15 +6,14 @@ const {
   SESSION_SECRET,
   SESSION_NAME,
   SESSION_MAX_AGE,
+  DB_PATH,
 } = require('./env');
 const { routes } = require('./routes');
 const { errorHandler } = require('./errorHandler');
 const { requestLogger } = require('./requestLogger');
 
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('db.sqlite');
-
-// const { Admin } = require
+const db = new sqlite3.Database(DB_PATH);
 
 db.serialize(() => {
   // db.each('SELECT * FROM Admin', (err, row) => {
@@ -74,9 +73,16 @@ db.serialize(() => {
   SELECT * FROM ${model} WHERE id=${id};
 `;
 
+  const list = model => `
+  SELECT * FROM ${model}
+`;
+
   console.log(details('Admin', 1));
 
-  db.get(details('Admin', 1), (error, row) => {
+  db.get(details('Admin', 2), (error, row) => {
+    console.log(error, row);
+  });
+  db.each(list('Admin', 2), (error, row) => {
     console.log(error, row);
   });
 

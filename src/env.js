@@ -1,3 +1,4 @@
+const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -8,6 +9,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 module.exports = {
   __DEV__: NODE_ENV === 'development',
   NODE_ENV,
+  DB_PATH: require.resolve(path.join(__dirname, '../db.sqlite')),
   NO_AUTH: process.env.NO_AUTH,
   PORT: process.env.PORT || 3001,
   SESSION_MAX_AGE: process.env.SESSION_MAX_AGE || TWO_HOURS,
