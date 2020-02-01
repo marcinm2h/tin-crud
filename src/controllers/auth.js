@@ -1,13 +1,13 @@
 const { SESSION_NAME } = require('../env');
-const { UserRepository } = require('../services/repositories/memory/User');
+const { AdminService } = require('../services/Admin');
+const { UserService } = require('../services/User');
 const {
   validateData,
   validateLength,
   validateStringOrNumber,
 } = require('../validators');
-const { AdminService } = require('../services/Admin');
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { schema } = login;
   const data = validateData.parse(schema)(req.body.data);
   const errors = validateData(schema)(data);
@@ -17,18 +17,21 @@ const login = (req, res) => {
     });
   }
 
-  const userRepository = new UserRepository();
-  const user = userRepository.login(data);
+  const userService = new UserService();
+  userService
+    .login(data)
+    .then(user => {
+      req.session.userId = user.id;
+      req.session.login = user.login;
+      req.session.loggedIn = true;
 
-  req.session.userId = user.id;
-  req.session.login = user.login;
-  req.session.loggedIn = true;
-
-  return res.json({
-    data: {
-      user,
-    },
-  });
+      res.json({
+        data: {
+          user,
+        },
+      });
+    })
+    .catch(next);
 };
 
 login.schema = {

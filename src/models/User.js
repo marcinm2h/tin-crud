@@ -19,8 +19,8 @@ class User {
     this.password = password;
     this.mail = mail;
     this.name = name;
-    this.gender = gender; // FIXME: enum
-    this.registerDate = registerDate; // TODO: timestamp -> Date
+    this.gender = gender;
+    this.registerDate = registerDate;
 
     this.comments = comments;
     this.posts = posts;

@@ -1,11 +1,4 @@
-const omit = require('lodash/omit');
-const { User } = require('../models/User');
-const { UserRepository } = require('../services/repositories/memory/User');
-const {
-  CommentRepository,
-} = require('../services/repositories/memory/Comment');
-const { GroupRepository } = require('../services/repositories/memory/Group');
-const { PostRepository } = require('../services/repositories/memory/Post');
+const { UserService } = require('../services/User');
 const {
   validateSchema,
   validateData,
@@ -17,39 +10,34 @@ const {
   validatePasswordConfirm,
 } = require('../validators');
 
-const list = (req, res) => {
-  const userRepository = new UserRepository();
-  const users = userRepository.list();
-  const response = users.map(user => omit(user, ['password']));
-
-  return res.json({
-    data: response,
-  });
+const list = (req, res, next) => {
+  const userService = new UserService();
+  userService
+    .list()
+    .then(users => {
+      res.json({
+        data: users,
+      });
+    })
+    .catch(next);
 };
 
-const details = (req, res) => {
-  const id = parseInt(req.params.id);
-  const userRepository = new UserRepository();
-  const user = userRepository.find(id);
+// FIXME: posts, groups
+const details = (req, res, next) => {
+  const userService = new UserService();
+  const id = req.params.id;
 
-  const commentRepository = new CommentRepository();
-  user.comments = user.comments.map(id => commentRepository.find(id));
-
-  const groupRepository = new GroupRepository();
-  user.groupsCreated = user.groupsCreated.map(id => groupRepository.find(id));
-  user.groupsIn = user.groupsIn.map(id => groupRepository.find(id));
-
-  const postRepository = new PostRepository();
-  user.posts = user.posts.map(id => postRepository.find(id));
-
-  return res.json({
-    data: {
-      user,
-    },
-  });
+  userService
+    .details(id)
+    .then(user => {
+      res.json({
+        data: user,
+      });
+    })
+    .catch(next);
 };
 
-const add = (req, res) => {
+const add = (req, res, next) => {
   const { data, errors } = validateSchema(add.schema)(req.body.data);
   if (errors) {
     return res.json({
@@ -57,14 +45,15 @@ const add = (req, res) => {
     });
   }
 
-  const userRepository = new UserRepository();
-  const user = new User(data);
-  userRepository.add(user);
-  userRepository.save();
-
-  return res.json({
-    data: user,
-  });
+  const userService = new UserService();
+  userService
+    .add(data)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 };
 
 add.schema = {
@@ -106,7 +95,7 @@ add.schema = {
   },
 };
 
-const edit = (req, res) => {
+const edit = (req, res, next) => {
   const { schema } = edit;
   const data = validateData.parse(schema)(req.body.data);
   const errors = validateData(schema)(data);
@@ -116,10 +105,15 @@ const edit = (req, res) => {
     });
   }
 
-  const userRepository = new UserRepository();
-  const id = parseInt(req.params.id);
-  userRepository.edit(id, data);
-  userRepository.save();
+  const userService = new UserService();
+  userService
+    .edit(req.params.id, data)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 
   return res.json({
     data: {},
@@ -147,15 +141,16 @@ edit.schema = {
   },
 };
 
-const remove = (req, res) => {
-  const id = parseInt(req.params.id);
-  const userRepository = new UserRepository();
-  userRepository.remove(id);
-  userRepository.save();
-
-  return res.json({
-    data: {},
-  });
+const remove = (req, res, next) => {
+  const userService = new UserService();
+  userService
+    .remove(req.params.id)
+    .then(() => {
+      res.json({
+        data: {},
+      });
+    })
+    .catch(next);
 };
 
 module.exports = { list, details, add, edit, remove };

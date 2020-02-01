@@ -23,8 +23,13 @@ const parseBool = value => Boolean(value);
 
 const parseDate = value => new Date(value);
 
+const mapModel = modelName =>
+  ({
+    User: 'Logged',
+  }[modelName] || modelName); // FIXME: move to model definition
+
 const parseModelName = model =>
-  typeof model === 'string' ? model : model.name;
+  mapModel(typeof model === 'string' ? model : model.name);
 
 const insert = (model, values) => `INSERT INTO "${parseModelName(model)}" (
   ${Object.keys(values)
