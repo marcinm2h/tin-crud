@@ -1,9 +1,20 @@
 const { Post } = require('../models/Post');
 const { DbService } = require('./Database');
+// const { GroupService } = require('./Group');
+const { CommentService } = require('./Comment');
+// const { UserService } = require('./User');
 const { errors } = require('../validators/errors');
 
 class PostService {
-  constructor({ deps = { DbService }, autoClose = true } = {}) {
+  constructor({
+    deps = {
+      DbService,
+      CommentService,
+      GroupService: require('./Group').GroupService,
+      UserService: require('./User').UserService,
+    },
+    autoClose = true,
+  } = {}) {
     this.deps = deps;
     this.autoClose = autoClose;
   }
@@ -26,11 +37,11 @@ class PostService {
     });
   }
 
-  details(id) {
-    const { DbService } = this.deps;
+  async details(id) {
+    const { DbService, CommentService, GroupService, UserService } = this.deps;
     const db = new DbService();
 
-    return new Promise((resolve, reject) => {
+    let post = await new Promise((resolve, reject) => {
       db.serialize(async () => {
         const post = await db
           .details(Post, id)
@@ -49,6 +60,22 @@ class PostService {
         resolve(post);
       });
     });
+
+    const groupService = new GroupService();
+    post.group = await groupService.details(post.group);
+
+    const comments = [];
+    for (let commentId of post.comments) {
+      const commentService = new CommentService();
+      const comment = await commentService.details(commentId);
+      comments.push(comment);
+    }
+
+    const userService = new UserService();
+    const author = await userService.details(post.author);
+    post.author = author;
+
+    return post;
   }
 
   add(values) {
