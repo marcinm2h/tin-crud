@@ -74,7 +74,7 @@ add.schema = {
   description: {
     required: true,
     validators: [
-      value => validateLength(value, { minLength: 20, maxLength: 200 }),
+      value => validateLength(value, { minLength: 8, maxLength: 200 }),
     ],
   },
   tag: {

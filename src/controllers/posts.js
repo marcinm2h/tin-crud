@@ -90,7 +90,7 @@ add.schema = {
   description: {
     required: true,
     validators: [
-      value => validateLength(value, { minLength: 20, maxLength: 200 }),
+      value => validateLength(value, { minLength: 8, maxLength: 200 }),
     ],
   },
   groupId: {
@@ -135,38 +135,6 @@ edit.schema = {
 };
 
 const remove = (req, res, next) => {
-  // const id = parseInt(req.params.id);
-  // const postRepository = new PostRepository();
-  // const userRepository = new UserRepository();
-  // const groupRepository = new GroupRepository();
-  // const commentRepository = new CommentRepository();
-
-  // const post = postRepository.find(id);
-  // const user = userRepository.find(post.author);
-  // const group = groupRepository.find(post.group);
-
-  // userRepository.edit(user.id, {
-  //   posts: user.posts.filter(postId => postId !== post.id),
-  // });
-  // groupRepository.edit(group.id, {
-  //   posts: group.posts.filter(postId => postId !== post.id),
-  // });
-
-  // post.comments.forEach(commentId => {
-  //   commentRepository.remove(commentId);
-  // });
-
-  // postRepository.remove(id);
-
-  // commentRepository.save();
-  // userRepository.save();
-  // groupRepository.save();
-  // postRepository.save();
-
-  // return res.json({
-  //   data: {},
-  // });
-
   const postService = new PostService();
   postService
     .remove(req.params.id)

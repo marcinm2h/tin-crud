@@ -84,7 +84,7 @@ class GroupService {
     const { DbService } = this.deps;
     const db = new DbService();
 
-    const groupId = await new Promise((resolve, reject) => {
+    const group = await new Promise((resolve, reject) => {
       db.serialize(async () => {
         const group = await db
           .add(Group, values)
@@ -102,9 +102,9 @@ class GroupService {
     });
     const { UserGroupService } = this.deps;
     const userGroupService = new UserGroupService();
-    await userGroupService.add({ groupId, userId: values.owner });
+    await userGroupService.add({ groupId: group.id, userId: values.owner });
 
-    return groupId;
+    return group;
   }
 
   edit(id, values) {
