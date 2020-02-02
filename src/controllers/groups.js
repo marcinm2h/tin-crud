@@ -53,10 +53,10 @@ const add = (req, res, next) => {
       },
       req.session.userId,
     )
-    .then(id => {
+    .then(group => {
       res.json({
         data: {
-          id,
+          group,
         },
       });
     })

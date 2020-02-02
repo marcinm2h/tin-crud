@@ -107,11 +107,11 @@ class DbService {
       console.log(query);
     }
     return new Promise((resolve, reject) => {
-      this.__instance.run(query, (err, result) => {
+      this.__instance.run(query, function(err) {
         if (err) {
           return reject(err);
         }
-        return resolve(result);
+        return resolve(this.lastID);
       });
     });
   }

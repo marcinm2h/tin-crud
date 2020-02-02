@@ -7,7 +7,7 @@ const {
   validateStringOrNumber,
 } = require('../validators');
 
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   const { schema } = login;
   const data = validateData.parse(schema)(req.body.data);
   const errors = validateData(schema)(data);
@@ -16,22 +16,24 @@ const login = (req, res, next) => {
       errors,
     });
   }
+  try {
+    const userService = new UserService();
+    let user = await userService.login(data);
+    const userGroups = userService.groups(user.id);
+    user.groups = userGroups;
 
-  const userService = new UserService();
-  userService
-    .login(data)
-    .then(user => {
-      req.session.userId = user.id;
-      req.session.login = user.login;
-      req.session.loggedIn = true;
+    req.session.userId = user.id;
+    req.session.login = user.login;
+    req.session.loggedIn = true;
 
-      res.json({
-        data: {
-          user,
-        },
-      });
-    })
-    .catch(next);
+    res.json({
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 login.schema = {

@@ -1,13 +1,18 @@
 const { Group } = require('../models/Group');
 const { DbService } = require('./Database');
 const { UserGroupService } = require('./UserGroup');
-const { UserService } = require('./User');
+// const { UserService } = require('./User');
 const { PostService } = require('./Post');
 const { errors } = require('../validators/errors');
 
 class GroupService {
   constructor({
-    deps = { DbService, UserGroupService, PostService, UserService },
+    deps = {
+      DbService,
+      UserGroupService,
+      PostService,
+      UserService: require('./User').UserService,
+    },
     autoClose = true,
   } = {}) {
     this.deps = deps;
@@ -81,15 +86,18 @@ class GroupService {
 
     const groupId = await new Promise((resolve, reject) => {
       db.serialize(async () => {
-        const groupId = await db.add(Group, values).catch(e => {
-          throw new Error(e);
-        });
+        const group = await db
+          .add(Group, values)
+          .then(id => new Group({ ...values, id }))
+          .catch(e => {
+            throw new Error(e);
+          });
 
         if (this.autoClose) {
           db.close();
         }
 
-        resolve(groupId);
+        resolve(group);
       });
     });
     const { UserGroupService } = this.deps;

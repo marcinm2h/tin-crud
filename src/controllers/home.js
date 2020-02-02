@@ -14,8 +14,8 @@ const posts = async (req, res, next) => {
       group: groups.find(({ id }) => id === post.group),
     }));
 
-    const filteredPosts = allPosts.filter(post => !post.group.isHidden);
-    const sortedPosts = filteredPosts.reverse();
+    // const filteredPosts = allPosts.filter(post => !post.group.isHidden);
+    const sortedPosts = allPosts.reverse();
 
     res.json({
       data: {

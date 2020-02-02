@@ -54,12 +54,11 @@ class PostService {
   add(values) {
     const { DbService } = this.deps;
     const db = new DbService();
-
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
         const post = await db
           .add(Post, values)
-          .then(p => p && new Post(p))
+          .then(id => new Post({ ...values, id }))
           .catch(reject);
 
         if (this.autoClose) {

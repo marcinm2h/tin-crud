@@ -51,7 +51,7 @@ const details = (req, res, next) => {
     .catch(next);
 };
 
-const add = (req, res, next) => {
+const add = async (req, res, next) => {
   const {
     errors,
     data: { groupId, ...data },
@@ -60,46 +60,23 @@ const add = (req, res, next) => {
     return res.json({ errors });
   }
 
-  // const postRepository = new PostRepository();
-  // const userRepository = new UserRepository();
-  // const groupRepository = new GroupRepository();
+  try {
+    const postService = new PostService();
+    const post = await postService.add({
+      ...data,
+      group: groupId,
+      url: data.url.includes('//') ? data.url : `//${[data.url]}`,
+      author: req.session.userId,
+    });
 
-  // const user = userRepository.find(req.session.userId);
-  // const group = groupRepository.find(parseInt(groupId));
-  // const post = new Post(data);
-  // if (!post.url.includes('//')) {
-  //   post.url = `//${[post.url]}`;
-  // }
-
-  // post.author = user.id;
-  // user.posts.push(post.id);
-
-  // post.group = group.id;
-  // group.posts.push(post.id);
-
-  // postRepository.add(post);
-
-  // userRepository.save();
-  // groupRepository.save();
-  // postRepository.save();
-
-  // return res.json({
-  //   data: {
-  //     post,
-  //   },
-  // });
-
-  const postService = new PostService();
-  postService
-    .add(data)
-    .then(post => {
-      res.json({
-        data: {
-          post,
-        },
-      });
-    })
-    .catch(next);
+    res.json({
+      data: {
+        post,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 add.schema = {
@@ -201,36 +178,34 @@ const remove = (req, res, next) => {
     .catch(next);
 };
 
-const vote = (req, res, next) => {
+const vote = async (req, res, next) => {
   const { errors, data } = validateSchema(vote.schema)(req.body.data);
   if (errors) {
     return res.json({ errors });
   }
 
-  const postService = new PostService();
-  postService
-    .details(req.params.id)
-    .then(post => {
-      const postService = new PostService();
-      const votesAgainst =
-        data.type === 'against' ? post.votesAgainst + 1 : post.votesAgainst;
-      const votesFor = data.type === 'for' ? post.votesFor + 1 : post.votesFor;
+  try {
+    const post = await new PostService().details(req.params.id);
+    const votesAgainst =
+      data.type === 'against' ? post.votesAgainst + 1 : post.votesAgainst;
+    const votesFor = data.type === 'for' ? post.votesFor + 1 : post.votesFor;
+    await new PostService().edit(req.params.id, {
+      votesAgainst,
+      votesFor,
+    });
 
-      postService
-        .edit(req.params.id, {
+    res.json({
+      data: {
+        post: {
+          ...post,
           votesAgainst,
           votesFor,
-        })
-        .then(post => {
-          res.json({
-            data: {
-              post,
-            },
-          });
-        })
-        .catch(next);
-    })
-    .catch(next);
+        },
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
 vote.schema = {

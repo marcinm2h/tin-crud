@@ -1,11 +1,16 @@
 const omit = require('lodash/omit');
 const { User } = require('../models/User');
 const { DbService } = require('./Database');
+const { GroupService } = require('./Group');
 const { PostService } = require('./Post');
+const { UserGroupService } = require('./UserGroup');
 const { errors } = require('../validators/errors');
 
 class UserService {
-  constructor({ deps = { DbService, PostService }, autoClose = true } = {}) {
+  constructor({
+    deps = { DbService, GroupService, PostService, UserGroupService },
+    autoClose = true,
+  } = {}) {
     this.deps = deps;
     this.autoClose = autoClose;
   }
@@ -26,6 +31,21 @@ class UserService {
           reject(new Error(errors.USER_NOT_EXIST(login)));
         });
     });
+  }
+
+  async groups(id) {
+    const { GroupService, UserGroupService } = this.deps;
+    const userGroupService = new UserGroupService();
+    const userGroups = await userGroupService.find({ userId: id });
+    const userGroupsIds = userGroups.map(({ groupId }) => groupId);
+    const groups = [];
+    for (let userGroup of userGroupsIds) {
+      const groupService = new GroupService();
+      const group = await groupService.details(userGroup);
+      groups.push(group);
+    }
+
+    return groups;
   }
 
   list() {
