@@ -9,11 +9,14 @@ const {
 const list = (req, res, next) => {
   const groupService = new GroupService();
   groupService
-    .list()
+    .list(req.session.userId)
     .then(groups => {
       res.json({
         data: {
-          groups,
+          groups: groups.map(group => ({
+            ...group,
+            joined: group.users.includes(req.session.userId),
+          })),
         },
       });
     })

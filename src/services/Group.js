@@ -37,11 +37,11 @@ class GroupService {
     });
   }
 
-  list() {
+  async list() {
     const { DbService } = this.deps;
     const db = new DbService();
 
-    return new Promise((resolve, reject) => {
+    const groups = await new Promise((resolve, reject) => {
       db.serialize(async () => {
         const groups = await db
           .list(Group)
@@ -53,6 +53,16 @@ class GroupService {
         resolve(groups);
       });
     });
+    const { UserGroupService } = this.deps;
+
+    for (let group of groups) {
+      const userGroupService = new UserGroupService();
+      const userGroup = await userGroupService.find({ groupId: group.id });
+      const groupUsers = userGroup.map(({ loggedId }) => loggedId);
+      group.users = groupUsers;
+    }
+
+    return groups;
   }
 
   details(id) {
