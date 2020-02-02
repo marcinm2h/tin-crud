@@ -64,7 +64,7 @@ add.schema = {
     required: true,
     validators: [
       validateUrl,
-      value => validateLength(value, { minLength: 4, maxLength: 50 }),
+      value => validateLength(value, { minLength: 4, maxLength: 256 }),
     ],
   },
   description: {
@@ -103,13 +103,13 @@ edit.schema = {
     required: true,
     validators: [
       validateUrl,
-      value => validateLength(value, { minLength: 4, maxLength: 50 }),
+      value => validateLength(value, { minLength: 4, maxLength: 256 }),
     ],
   },
   description: {
     required: true,
     validators: [
-      value => validateLength(value, { minLength: 20, maxLength: 200 }),
+      value => validateLength(value, { minLength: 8, maxLength: 200 }),
     ],
   },
 };
