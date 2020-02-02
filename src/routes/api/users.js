@@ -4,9 +4,9 @@ const { auth } = require('../auth');
 
 const router = Router();
 
-router.get('/users', auth.required, list);
+router.get('/users', list);
 
-router.get('/users/:id', auth.required, details);
+router.get('/users/:id', details);
 
 router.post('/users', add);
 

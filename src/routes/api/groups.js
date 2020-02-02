@@ -12,9 +12,9 @@ const { auth } = require('../auth');
 
 const router = Router();
 
-router.get('/groups', auth.required, list);
+router.get('/groups', list);
 
-router.get('/groups/:id', auth.required, details);
+router.get('/groups/:id', details);
 
 router.post('/groups', auth.required, add);
 
